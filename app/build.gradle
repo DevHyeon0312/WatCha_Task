@@ -30,8 +30,8 @@ android {
         jvmTarget = '1.8'
     }
 
-    viewBinding {
-        enabled = true
+    buildFeatures {
+        viewBinding = true
     }
 }
 
@@ -46,5 +46,17 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
+    //ViewModel
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1"
 
+    /** 의존성 주입을 편하게 하기 위하여 Koin 라이브러리를 사용하였습니다. */
+    implementation "org.koin:koin-core:$koin_version"
+    implementation "org.koin:koin-android:$koin_version"
+    implementation "org.koin:koin-android-viewmodel:$koin_version"
+    implementation "org.koin:koin-android-architecture:0.8.2"
+
+    /** API 사용을 편하게 하기 위하여 Retrofit2 사용하였습니다. */
+    implementation "com.squareup.retrofit2:retrofit:$retrofit2_version"          // http 통신을 편하게 하기 위해 추가하였습니다.
+    implementation "com.squareup.retrofit2:converter-gson:$retrofit2_version"    // json 객체를 매핑하는 작업을 편하게 하기 위하여 추가하였습니다.
+    implementation "com.squareup.okhttp3:logging-interceptor:$okhttp_version"    // server의 응답을 로그로 확인하기 위하여 추가하였습니다.
 }
