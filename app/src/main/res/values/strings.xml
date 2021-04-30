@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">iTunes Search</string>
+
+    <!-- tools Text -->
+    <string name="track_name">trackName</string>
+    <string name="collection_name">collectionName</string>
+    <string name="artist_name">artistName</string>
+
 </resources>

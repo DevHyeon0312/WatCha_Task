@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Text Size -->
+    <dimen name="font_size_track_name">18sp</dimen>
+    <dimen name="font_size_collection_name">16sp</dimen>
+    <dimen name="font_size_artist_name">14sp</dimen>
+
+    <!-- View Size -->
+    <dimen name="view_size_ic_star">30dp</dimen>
+    <dimen name="view_size_track_art">70dp</dimen>
+
+    <!-- Padding -->
+    <dimen name="padding_button_click_area">10dp</dimen>
+    <dimen name="padding_item_track_area">5dp</dimen>
+
+    <!-- Margin -->
+    <dimen name="margin_text_track_area">5dp</dimen>
+
+
+</resources>

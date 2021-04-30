@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/padding_item_track_area">
+
+    <ImageView
+        android:id="@+id/iv_track_art"
+        android:layout_width="@dimen/view_size_track_art"
+        android:layout_height="@dimen/view_size_track_art"
+        app:layout_constraintBottom_toBottomOf="@+id/ll_textLayout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/ll_textLayout"
+        app:srcCompat="@android:drawable/ic_menu_gallery" />
+
+    <LinearLayout
+        android:id="@+id/ll_textLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toStartOf="@+id/btn_star"
+        app:layout_constraintStart_toEndOf="@+id/iv_track_art"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/tv_track_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/font_size_track_name"
+            android:layout_margin="@dimen/margin_text_track_area"
+            android:textStyle="bold"
+            tools:text="@string/track_name"/>
+
+        <TextView
+            android:id="@+id/tv_collection_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_text_track_area"
+            android:textSize="@dimen/font_size_collection_name"
+            tools:text="@string/collection_name"/>
+
+        <TextView
+            android:id="@+id/tv_artist_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_text_track_area"
+            android:textSize="@dimen/font_size_artist_name"
+            tools:text="@string/artist_name"/>
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/btn_star"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/padding_button_click_area"
+        app:layout_constraintBottom_toBottomOf="@+id/ll_textLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/ll_textLayout">
+
+        <ToggleButton
+            android:id="@+id/toggle_star"
+            android:layout_width="@dimen/view_size_ic_star"
+            android:layout_height="@dimen/view_size_ic_star"
+            android:background="@drawable/ic_star_selector_30"
+            android:textOff=""
+            android:textOn=""
+            tools:ignore="MissingConstraints" />
+    </FrameLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
