@@ -19,5 +19,6 @@ data class ITunesTrack(
     @SerializedName("artistName")       val artistName      : String,
     @SerializedName("collectionName")   val collectionName  : String,
     @SerializedName("trackName")        val trackName       : String,
-    @SerializedName("artworkUrl100")    val artworkUrl100   : String
+    @SerializedName("artworkUrl100")    val artworkUrl100   : String,
+    var favorit : Boolean = false
 )
