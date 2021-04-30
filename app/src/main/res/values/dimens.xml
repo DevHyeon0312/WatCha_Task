@@ -4,6 +4,7 @@
     <dimen name="font_size_track_name">18sp</dimen>
     <dimen name="font_size_collection_name">16sp</dimen>
     <dimen name="font_size_artist_name">14sp</dimen>
+    <dimen name="font_size_error_message">18sp</dimen>
 
     <!-- View Size -->
     <dimen name="view_size_ic_star">30dp</dimen>
