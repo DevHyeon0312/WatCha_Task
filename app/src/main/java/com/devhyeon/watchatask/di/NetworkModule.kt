@@ -1,6 +1,5 @@
 package com.devhyeon.watchatask.di
 
-import com.devhyeon.watchatask.constant.HTTP_LOG_LEVEL
 import com.devhyeon.watchatask.constant.ITUNES_BASE_URL
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -20,7 +19,7 @@ val NetworkModule = module {
 /** OkHttpClient 생성 */
 fun createOkHttpClient(): OkHttpClient {
     val httpLoggingInterceptor = HttpLoggingInterceptor()
-    httpLoggingInterceptor.level = HTTP_LOG_LEVEL
+    httpLoggingInterceptor.level = HttpLoggingInterceptor.Level.BASIC
     return OkHttpClient.Builder()
         .addInterceptor(httpLoggingInterceptor)
         .build()

@@ -1,11 +1,9 @@
 package com.devhyeon.watchatask.di
 
-import com.devhyeon.watchatask.network.ITunesViewModel
 import com.devhyeon.watchatask.network.itunes.ITunesAPI
 import com.devhyeon.watchatask.network.itunes.repository.ITunesRepository
 import com.devhyeon.watchatask.network.itunes.repository.ITunesRepositoryImp
 import com.devhyeon.watchatask.network.itunes.ITunesAPIService
-import org.koin.android.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 import retrofit2.Retrofit
 
