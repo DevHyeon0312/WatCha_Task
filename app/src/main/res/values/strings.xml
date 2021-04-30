@@ -1,9 +1,18 @@
 <resources>
     <string name="app_name">iTunes Search</string>
+    <!-- menu Text -->
+    <string name="menu_search">Search</string>
+    <string name="menu_star">Favorite</string>
 
     <!-- tools Text -->
     <string name="track_name">trackName</string>
     <string name="collection_name">collectionName</string>
     <string name="artist_name">artistName</string>
+
+    <!-- Error Text -->
+    <string name="error_message">에러가 발생하였습니다. 다시 시도해주세요.</string>
+    
+    <!-- View Text -->
+    <string name="button_refresh">새로고침</string>
 
 </resources>
