@@ -31,6 +31,7 @@ class TrackListAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     fun addItem(list: List<ITunesTrack>) {
+        mPostList.clear()
         mPostList.addAll(list)
         notifyDataSetChanged()
     }
