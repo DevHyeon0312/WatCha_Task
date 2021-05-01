@@ -12,7 +12,7 @@ import com.devhyeon.watchatask.network.itunes.data.ITunesTrack
 import kotlin.properties.Delegates
 
 class TrackListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    var mPostList: List<ITunesTrack> by Delegates.observable(emptyList()) { _, _, _ ->
+    var mPostList: MutableList<ITunesTrack> by Delegates.observable(mutableListOf()) { _, _, _ ->
         notifyDataSetChanged()
     }
 
@@ -29,6 +29,10 @@ class TrackListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         (holder as TrackListViewHolder).onBind(getItem(position))
+    }
+
+    fun addItem(list : List<ITunesTrack>) {
+        mPostList.addAll(list)
     }
 
     private inner class TrackListViewHolder(private val viewDataBinding: ViewDataBinding) :

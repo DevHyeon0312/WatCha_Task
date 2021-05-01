@@ -55,7 +55,7 @@ class SearchFragment : Fragment() {
                     binding.errorView.toGone()
                 }
                 is Status.Success -> {
-                    mAdapter?.mPostList = it.data!!.results
+                    mAdapter?.addItem(it.data!!.results)
                     binding.loaderView.toGone()
                     binding.contentsView.toVisible()
                     binding.errorView.toGone()
