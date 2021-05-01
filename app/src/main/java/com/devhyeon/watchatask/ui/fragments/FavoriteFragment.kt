@@ -87,7 +87,7 @@ class FavoriteFragment : Fragment() {
                     viewVisibleRun()
                 }
                 is Status.Success -> {
-                    mAdapter?.mPostList = it.data!!
+                    addFavoriteItem(it.data!!)
                     viewVisibleSuccess()
                 }
                 is Status.Failure -> {
@@ -95,6 +95,11 @@ class FavoriteFragment : Fragment() {
                 }
             }
         })
+    }
+
+    /** 즐겨찾기 항목 추가 */
+    private fun addFavoriteItem(list : List<ITunesTrack>) {
+        mAdapter?.mPostList = list
     }
 
     /** RUN 상태 일때 보여주는 View */

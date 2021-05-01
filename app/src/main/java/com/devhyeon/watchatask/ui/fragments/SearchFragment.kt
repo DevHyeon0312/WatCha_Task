@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ToggleButton
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.devhyeon.watchatask.databinding.FragmentTracklistBinding
@@ -14,6 +15,11 @@ import com.devhyeon.watchatask.ui.adapters.TrackListAdapter
 import com.devhyeon.watchatask.utils.Status
 import com.devhyeon.watchatask.utils.toGone
 import com.devhyeon.watchatask.utils.toVisible
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.launch
+import org.koin.android.scope.lifecycleScope
+import org.koin.android.viewmodel.ext.android.getViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
 
 class SearchFragment : Fragment() {
@@ -69,7 +75,7 @@ class SearchFragment : Fragment() {
         //리스트 아이템 클릭 리스너
         mAdapter!!.setOnItemClickListener(object : TrackListAdapter.OnItemClickListener {
             override fun onItemClick(v: View?, track: ITunesTrack) {
-                if (track.favorit) {
+                if (track.favorit ) {
                     favoriteViewModel.addItem(track)
                 } else {
                     favoriteViewModel.removeItem(track)
@@ -85,16 +91,15 @@ class SearchFragment : Fragment() {
     }
 
     /** API 결과 옵저버 */
+    var apiData : List<ITunesTrack>? = null
     private fun iTunesObserve() {
         //API 요청,응답 에 따라 Run - Success - Fail
         iTunesViewModel.trackResponse.observe(viewLifecycleOwner, Observer {
             when (it) {
-                is Status.Run -> { }
+                is Status.Run -> {}
                 is Status.Success -> {
-                    for (track : ITunesTrack in it.data!!.results) {
-                        track.favorit = isContainsKey(track)
-                    }
-                    mAdapter?.addItem(it.data.results)
+                    apiData = it.data!!.results
+                    addApiItem(apiData)
                     viewVisibleSuccess()
                 }
                 is Status.Failure -> {
@@ -127,6 +132,10 @@ class SearchFragment : Fragment() {
                 }
                 is Status.Success -> {
                     createFavoriteMap(it.data!!)
+
+                    addFavoriteItem(it.data!!)
+                    addApiItem(apiData)
+
                     iTunesViewModel.loadSearchData(TREM, ENTRY)
                 }
                 is Status.Failure -> {
@@ -134,6 +143,23 @@ class SearchFragment : Fragment() {
                 }
             }
         })
+    }
+
+    /** 즐겨찾기 항목 추가 */
+    private fun addFavoriteItem(list : List<ITunesTrack>) {
+        mAdapter?.mPostList!!.clear()
+        mAdapter?.addItem(list)
+    }
+    /** 즐겨찾기 안한 항목 추가 */
+    private fun addApiItem(list : List<ITunesTrack>?) {
+        if(list != null) {
+            for (track : ITunesTrack in list) {
+                if(!isContainsKey(track)) {
+                    track.favorit = false
+                    mAdapter?.addItem(track)
+                }
+            }
+        }
     }
 
     /** RUN 상태 일때 보여주는 View */
