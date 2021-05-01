@@ -52,7 +52,7 @@
 
     </RelativeLayout>
 
-    <!-- Run 상태에 보여줄 ViewGroup -->
+    <!-- error 상태에 보여줄 ViewGroup -->
     <RelativeLayout
         android:id="@+id/error_view"
         android:layout_width="match_parent"

@@ -11,7 +11,7 @@
         android:id="@+id/loader_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -30,7 +30,7 @@
         android:id="@+id/contents_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="visible"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -51,7 +51,7 @@
     </RelativeLayout>
 
 
-    <!-- Fail & Error 상태에 보여줄 ViewGroup -->
+    <!-- error 상태에 보여줄 ViewGroup -->
     <RelativeLayout
         android:id="@+id/error_view"
         android:layout_width="match_parent"
@@ -66,7 +66,7 @@
             android:id="@+id/btn_refresh"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:layout_centerInParent="true"
             android:text="@string/button_refresh" />
 
     </RelativeLayout>
