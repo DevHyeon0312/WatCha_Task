@@ -1,13 +1,20 @@
 package com.devhyeon.watchatask.ui.fragments
 
 import android.os.Bundle
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.devhyeon.watchatask.constant.TIME_OUT
+import com.devhyeon.watchatask.constant.VIEW_STATUS_FAIL
+import com.devhyeon.watchatask.constant.VIEW_STATUS_RUN
+import com.devhyeon.watchatask.constant.VIEW_STATUS_SUCCESS
 import com.devhyeon.watchatask.databinding.FragmentTracklistBinding
 import com.devhyeon.watchatask.db.FavoriteViewModel
 import com.devhyeon.watchatask.network.ITunesViewModel
@@ -19,7 +26,11 @@ import com.devhyeon.watchatask.utils.DebugLog
 import com.devhyeon.watchatask.utils.Status
 import com.devhyeon.watchatask.utils.toGone
 import com.devhyeon.watchatask.utils.toVisible
+import kotlinx.coroutines.launch
 import org.koin.android.viewmodel.ext.android.viewModel
+import java.util.*
+import kotlin.collections.HashMap
+import kotlin.concurrent.timer
 
 /**
  * 검색조회를 보여주는 Fragment
@@ -50,6 +61,7 @@ class SearchFragment : BaseFragment() , OnToggleClickListener {
     private var OFFSET: Long = 0   //시작위치
     private val SCROLL_TOP_DOWN = 1 //스크롤 방향
     private var isScrolled = false  //스크롤여부
+
 
     override fun initViewBinding(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) {
         _binding = FragmentTracklistBinding.inflate(inflater, container, false)
@@ -178,6 +190,7 @@ class SearchFragment : BaseFragment() , OnToggleClickListener {
                 is Status.Run -> {
                     isRunState = true
                     viewVisibleRun()
+                    readTimeOut()
                 }
                 is Status.Success -> {
                     if(isRunState) {
@@ -207,6 +220,7 @@ class SearchFragment : BaseFragment() , OnToggleClickListener {
                 is Status.Run -> {
                     isRunState = true
                     viewVisibleRun()
+                    readTimeOut()
                 }
                 is Status.Success -> {
                     if(isRunState) {
@@ -227,17 +241,18 @@ class SearchFragment : BaseFragment() , OnToggleClickListener {
 
     /** RUN 상태 일때 보여주는 View */
     private fun viewVisibleRun() {
+        viewStatus = VIEW_STATUS_RUN
         if(!isScrolled) {
             viewVisibleIsNotScroll()
         } else {
             viewVisibleIsScroll()
         }
     }
-    /** 스크롤인 경우에 보여주는 View */
+    /** RUN 상태 스크롤인 경우에 보여주는 View */
     private fun viewVisibleIsScroll() {
         binding.rvTrackLoader.toVisible()
     }
-    /** 스크롤이 아닌 경우에 보여주는 View */
+    /** RUN 상태 스크롤이 아닌 경우에 보여주는 View */
     private fun viewVisibleIsNotScroll() {
         binding.loaderView.toVisible()
         binding.contentsView.toGone()
@@ -246,6 +261,7 @@ class SearchFragment : BaseFragment() , OnToggleClickListener {
 
     /** SUCCESS 상태 일때 보여주는 View */
     private fun viewVisibleSuccess() {
+        viewStatus = VIEW_STATUS_SUCCESS
         binding.loaderView.toGone()
         binding.contentsView.toVisible()
         binding.errorView.toGone()
@@ -254,6 +270,7 @@ class SearchFragment : BaseFragment() , OnToggleClickListener {
 
     /** FAIL 상태 일때 보여주는 View */
     private fun viewVisibleFailure() {
+        viewStatus = VIEW_STATUS_FAIL
         binding.loaderView.toGone()
         binding.contentsView.toGone()
         binding.errorView.toVisible()
@@ -266,6 +283,23 @@ class SearchFragment : BaseFragment() , OnToggleClickListener {
             favoriteViewModel.addItem(track)
         } else {
             favoriteViewModel.removeItem(track)
+        }
+    }
+
+    /** 동시성이슈로 혹시나 RUN 상태에서 진행이 멈춘경우에 체크하기 위함 */
+    var viewStatus = 1
+    fun readTimeOut() {
+        viewLifecycleOwner.lifecycle.let {
+            //TIME_OUT 이후에 동작
+            Handler().postDelayed({
+                //view 가 null 이 아닐 때,
+                if(view != null) {
+                    //Fragment LifeCycle 이 RESUMED 상태일 때, viewStatus 가 RUN 상태를 유지하고 있다면,
+                    if(viewLifecycleOwner.lifecycle.currentState == Lifecycle.State.RESUMED && viewStatus == VIEW_STATUS_RUN ) {
+                        viewVisibleFailure()
+                    }
+                }
+            }, TIME_OUT)
         }
     }
 }
