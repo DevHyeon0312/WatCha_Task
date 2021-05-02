@@ -234,7 +234,6 @@ class SearchFragment : BaseFragment() , OnToggleClickListener {
 
     /** RUN 상태 일때 보여주는 View */
     private fun viewVisibleRun() {
-        viewStatus = VIEW_STATUS_RUN
         if(!isScrolled) {
             viewVisibleIsNotScroll()
         } else {
@@ -247,6 +246,7 @@ class SearchFragment : BaseFragment() , OnToggleClickListener {
     }
     /** RUN 상태 스크롤이 아닌 경우에 보여주는 View */
     private fun viewVisibleIsNotScroll() {
+        viewStatus = VIEW_STATUS_RUN
         binding.loaderView.toVisible()
         binding.contentsView.toGone()
         binding.errorView.toGone()
