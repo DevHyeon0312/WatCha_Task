@@ -288,7 +288,7 @@ class SearchFragment : BaseFragment() , OnToggleClickListener {
 
     /** 동시성이슈로 혹시나 RUN 상태에서 진행이 멈춘경우에 체크하기 위함 */
     var viewStatus = 1
-    fun readTimeOut() {
+    private fun readTimeOut() {
         viewLifecycleOwner.lifecycle.let {
             //TIME_OUT 이후에 동작
             Handler().postDelayed({
