@@ -65,4 +65,9 @@ dependencies {
     implementation "com.squareup.retrofit2:retrofit:$retrofit2_version"          // http 통신을 편하게 하기 위해 추가하였습니다.
     implementation "com.squareup.retrofit2:converter-gson:$retrofit2_version"    // json 객체를 매핑하는 작업을 편하게 하기 위하여 추가하였습니다.
     implementation "com.squareup.okhttp3:logging-interceptor:$okhttp_version"    // server의 응답을 로그로 확인하기 위하여 추가하였습니다.
+
+    /** 이미지 로딩을 쉽게 하기 위해 Glide 라이브러리 사용 */
+    implementation 'com.github.bumptech.glide:glide:4.12.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.12.0'
+
 }
