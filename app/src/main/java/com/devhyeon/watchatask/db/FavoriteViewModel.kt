@@ -1,14 +1,15 @@
 package com.devhyeon.watchatask.db
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
+import com.devhyeon.watchatask.constant.API_ERROR
 import com.devhyeon.watchatask.db.favorite.FavoriteDatabase
+import com.devhyeon.watchatask.network.itunes.data.ITunesResponse
 import com.devhyeon.watchatask.network.itunes.data.ITunesTrack
 import com.devhyeon.watchatask.utils.Status
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 class FavoriteViewModel constructor(private val favoriteDatabase: FavoriteDatabase) : ViewModel() {
     private val _trackAllData = MutableLiveData<Status<List<ITunesTrack>>>()
@@ -31,11 +32,14 @@ class FavoriteViewModel constructor(private val favoriteDatabase: FavoriteDataba
         CoroutineScope(Dispatchers.IO).launch {
             var tracks : List<ITunesTrack>? = null
             runCatching {
+                println("getAll RUN")
                 _trackAllData.postValue(Status.Run())
                 tracks = favoriteDatabase.favoriteDto().getAll()
             }.onSuccess {
+                println("getAll SUCCESS")
                 _trackAllData.postValue(Status.Success(tracks!!))
             }.onFailure {
+                println("getAll FAIL")
                 _trackAllData.postValue(Status.Failure(-3,it.message!!))
             }
         }

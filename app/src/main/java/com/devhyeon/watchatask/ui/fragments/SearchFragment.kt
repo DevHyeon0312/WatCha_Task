@@ -16,6 +16,7 @@ import com.devhyeon.watchatask.ui.adapters.TrackListAdapter
 import com.devhyeon.watchatask.utils.Status
 import com.devhyeon.watchatask.utils.toGone
 import com.devhyeon.watchatask.utils.toVisible
+import kotlinx.coroutines.runBlocking
 import org.koin.android.viewmodel.ext.android.viewModel
 
 class SearchFragment : Fragment() {
@@ -41,6 +42,7 @@ class SearchFragment : Fragment() {
         _binding = FragmentTracklistBinding.inflate(inflater, container, false)
 
         binding.rvTrackList.adapter = mAdapter
+        mAdapter?.mPostList!!.clear()
 
         return binding.root
     }
@@ -55,7 +57,8 @@ class SearchFragment : Fragment() {
     /** Resume 상태에 진입하면, 데이터 수신 */
     override fun onResume() {
         super.onResume()
-        favoriteViewModel.getAll()
+//        favoriteViewModel.getAll()
+        iTunesViewModel.loadSearchData(viewLifecycleOwner,TREM, ENTRY)
     }
 
     /** View 가 제거될 때 함께 제거 */
@@ -86,15 +89,15 @@ class SearchFragment : Fragment() {
         favoriteObserve()
     }
 
-
-    var favoriteMap = HashMap<Long, ITunesTrack>()
     /** DB에 저장되어 있는 항목 */
+    var favoriteMap = HashMap<Long, ITunesTrack>()
     private fun createFavoriteMap(list : List<ITunesTrack>) {
         favoriteMap.clear()
         for (track : ITunesTrack in list) {
             favoriteMap.put(track.trackId,track)
         }
     }
+
     /** favoriteMap 에 해당 아이템이 있는지 확인 */
     private fun isContainsKey(track : ITunesTrack) : Boolean {
         return favoriteMap.containsKey(track.trackId)
@@ -102,19 +105,23 @@ class SearchFragment : Fragment() {
 
     /** DB 결과 옵저버 */
     private fun favoriteObserve() {
+        var isRunState = false
         //DB getAll 쿼리문 사용에 따른 Run - Success - Fail
         favoriteViewModel.trackAllData.observe(viewLifecycleOwner, Observer {
             when(it) {
                 is Status.Run -> {
                     viewVisibleRun()
+                    isRunState = true
                 }
                 is Status.Success -> {
-                    createFavoriteMap(it.data!!)
+                    if(isRunState) {
+                        //DB 조회결과에 따른 HashMap 생성
+                        createFavoriteMap(it.data!!)
+                        //API 결과를 삽입
+                        addApiItem(apiData)
 
-                    addFavoriteItem(it.data!!)
-                    addApiItem(apiData)
-
-                    iTunesViewModel.loadSearchData(TREM, ENTRY)
+                        viewVisibleSuccess()
+                    }
                 }
                 is Status.Failure -> {
                     viewVisibleFailure()
@@ -126,14 +133,21 @@ class SearchFragment : Fragment() {
     /** API 결과 옵저버 */
     var apiData : List<ITunesTrack>? = null
     private fun iTunesObserve() {
+        var isRunState = false
         //API 요청,응답 에 따라 Run - Success - Fail
         iTunesViewModel.trackResponse.observe(viewLifecycleOwner, Observer {
             when (it) {
-                is Status.Run -> {}
+                is Status.Run -> {
+                    isRunState = true
+                    viewVisibleRun()
+                }
                 is Status.Success -> {
-                    apiData = it.data!!.results
-                    addApiItem(apiData)
-                    viewVisibleSuccess()
+                    if(isRunState) {
+                        //API 결과 저장
+                        apiData = it.data!!.results
+                        //DB 조회 시작
+                        favoriteViewModel.getAll()
+                    }
                 }
                 is Status.Failure -> {
                     viewVisibleFailure()
@@ -142,17 +156,15 @@ class SearchFragment : Fragment() {
         })
     }
 
-    /** 즐겨찾기 항목 추가 */
-    private fun addFavoriteItem(list : List<ITunesTrack>) {
-        mAdapter?.mPostList!!.clear()
-        mAdapter?.addItem(list)
-    }
     /** 즐겨찾기 안한 항목 추가 */
     private fun addApiItem(list : List<ITunesTrack>?) {
         if(list != null) {
             for (track : ITunesTrack in list) {
                 if(!isContainsKey(track)) {
                     track.favorit = false
+                    mAdapter?.addItem(track)
+                } else {
+                    track.favorit = true
                     mAdapter?.addItem(track)
                 }
             }

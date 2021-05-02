@@ -54,6 +54,7 @@ dependencies {
 
     //ViewModel
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.3.1"
 
     /** 의존성 주입을 편하게 하기 위하여 Koin 라이브러리를 사용하였습니다. */
     implementation "org.koin:koin-core:$koin_version"
