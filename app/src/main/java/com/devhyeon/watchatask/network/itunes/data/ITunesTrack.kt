@@ -1,5 +1,8 @@
 package com.devhyeon.watchatask.network.itunes.data
 
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
 /**
@@ -12,13 +15,14 @@ import com.google.gson.annotations.SerializedName
  * @param(artworkUrl100)    : String    : 트랙에 이미지 URL
  * */
 
+@Entity(tableName = "favorite")
 data class ITunesTrack(
-    @SerializedName("artistId")         val artistId        : Long,
-    @SerializedName("collectionId")     val collectionId    : Long,
-    @SerializedName("trackId")          val trackId         : Long,
-    @SerializedName("artistName")       val artistName      : String,
-    @SerializedName("collectionName")   val collectionName  : String,
-    @SerializedName("trackName")        val trackName       : String,
-    @SerializedName("artworkUrl100")    val artworkUrl100   : String,
+    @ColumnInfo(name = "artistId") @SerializedName("artistId")         val artistId        : Long,
+    @ColumnInfo(name = "collectionId") @SerializedName("collectionId")     val collectionId    : Long,
+    @PrimaryKey @SerializedName("trackId")          val trackId         : Long,
+    @ColumnInfo(name = "artistName") @SerializedName("artistName")       val artistName      : String,
+    @ColumnInfo(name = "collectionName") @SerializedName("collectionName")   val collectionName  : String,
+    @ColumnInfo(name = "trackName") @SerializedName("trackName")        val trackName       : String,
+    @ColumnInfo(name = "artworkUrl100") @SerializedName("artworkUrl100")    val artworkUrl100   : String,
     var favorit : Boolean = false
 )
