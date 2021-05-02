@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -61,6 +61,11 @@ class SearchFragment : BaseFragment() , OnToggleClickListener {
 
     override fun init() {
         binding.rvTrackList.adapter = mAdapter
+        clearData()
+    }
+
+    /** 데이터 초기화 */
+    private fun clearData() {
         mAdapter?.mPostList!!.clear()
         OFFSET = 0
     }
@@ -83,17 +88,15 @@ class SearchFragment : BaseFragment() , OnToggleClickListener {
                 // 스크롤이 중간을 넘어간 경우
                 if (!binding.rvTrackList.canScrollVertically(SCROLL_TOP_DOWN) && lastVisibleItemPosition == itemTotalCount) {
                     isScrolled = true
-                    iTunesViewModel.loadSearchDataPagination(viewLifecycleOwner,TREM, ENTRY,LIMIT,OFFSET)
-                    OFFSET+=(LIMIT+1)
+                    loadSearchDataPagination(viewLifecycleOwner,TREM, ENTRY,LIMIT,OFFSET)
                 }
             }
         })
 
         //새로고침 클릭 이벤트
         binding.btnRefresh.setOnClickListener {
-            OFFSET = 0
-            iTunesViewModel.loadSearchDataPagination(viewLifecycleOwner,TREM, ENTRY,LIMIT,OFFSET)
-            OFFSET+=(LIMIT+1)
+            clearData()
+            loadSearchDataPagination(viewLifecycleOwner,TREM, ENTRY,LIMIT,OFFSET)
         }
     }
 
@@ -106,8 +109,7 @@ class SearchFragment : BaseFragment() , OnToggleClickListener {
     /** Resume 상태에 진입하면, 데이터 수신 */
     override fun onResume() {
         super.onResume()
-        iTunesViewModel.loadSearchDataPagination(viewLifecycleOwner,TREM, ENTRY,LIMIT,OFFSET)
-        OFFSET+=(LIMIT+1)
+        loadSearchDataPagination(viewLifecycleOwner,TREM, ENTRY,LIMIT,OFFSET)
     }
 
     /** View 가 제거될 때 함께 제거 */
@@ -116,6 +118,17 @@ class SearchFragment : BaseFragment() , OnToggleClickListener {
         _binding = null
         iTunesViewModel.trackResponse.removeObservers(viewLifecycleOwner)
         favoriteViewModel.trackAllData.removeObservers(viewLifecycleOwner)
+    }
+
+    /** Pagination 으로 검색 API 요청 */
+    private fun loadSearchDataPagination(owner: LifecycleOwner, term: String, entity: String, limit: Long, offset: Long) {
+        iTunesViewModel.loadSearchDataPagination(owner,term, entity,limit,offset)
+        OFFSET+=(LIMIT+1)
+    }
+
+    /** 기본 검색 API 요청 */
+    private fun loadSearchData(owner: LifecycleOwner, term: String, entity: String) {
+        iTunesViewModel.loadSearchData(owner, term, entity)
     }
 
     /** DB에 저장되어 있는 항목 */
@@ -127,9 +140,33 @@ class SearchFragment : BaseFragment() , OnToggleClickListener {
         }
     }
 
-    /** favoriteMap 에 해당 아이템이 있는지 확인 */
-    private fun isContainsKey(track : ITunesTrack) : Boolean {
+    /** 즐겨찾기한 아이템인지 확인 */
+    private fun isFavoriteItem(track : ITunesTrack) : Boolean {
         return favoriteMap.containsKey(track.trackId)
+    }
+
+    /** API 항목 추가 */
+    private fun addApiItem(list : List<ITunesTrack>?) {
+        if(list != null) {
+            //즐겨찾기 DB에 있는지 판단하여 구분하여 addItem
+            for (track : ITunesTrack in list) {
+                if(isFavoriteItem(track)) {
+                    addFavoriteItem(track)
+                } else {
+                    addOriginalItem(track)
+                }
+            }
+        }
+    }
+    /** 즐겨찾기한 아이템 추가 */
+    private fun addFavoriteItem(track : ITunesTrack) {
+        track.favorit = true
+        mAdapter?.addItem(track)
+    }
+    /** 즐겨찾기하지 않은 아이템 추가 */
+    private fun addOriginalItem(track : ITunesTrack) {
+        track.favorit = false
+        mAdapter?.addItem(track)
     }
 
     /** DB 결과 옵저버 */
@@ -186,22 +223,6 @@ class SearchFragment : BaseFragment() , OnToggleClickListener {
             }
         })
     }
-
-    /** 즐겨찾기 안한 항목 추가 */
-    private fun addApiItem(list : List<ITunesTrack>?) {
-        if(list != null) {
-            for (track : ITunesTrack in list) {
-                if(!isContainsKey(track)) {
-                    track.favorit = false
-                    mAdapter?.addItem(track)
-                } else {
-                    track.favorit = true
-                    mAdapter?.addItem(track)
-                }
-            }
-        }
-    }
-
 
 
     /** RUN 상태 일때 보여주는 View */
