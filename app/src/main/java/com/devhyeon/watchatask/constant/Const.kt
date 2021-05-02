@@ -6,3 +6,4 @@ const val FRAGMENT_FAVORITE = 2
 
 const val API_ERROR = -1
 const val NAVIGATION_CLICK_ERROR = -2
+const val DB_ERROR = -3
