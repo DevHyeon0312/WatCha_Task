@@ -7,4 +7,8 @@ class ITunesRepositoryImp(private val iTunesAPIService: ITunesAPIService) : ITun
     override suspend fun getSearchTrack(term: String, entity: String): ITunesResponse {
         return iTunesAPIService.getSearchTrack(term, entity)
     }
+
+    override suspend fun getSearchTrackPage(term: String, entity: String, limit: Long, offset: Long): ITunesResponse {
+        return iTunesAPIService.getSearchTrackPage(term, entity, limit, offset)
+    }
 }

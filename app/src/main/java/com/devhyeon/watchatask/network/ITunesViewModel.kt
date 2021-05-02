@@ -1,46 +1,41 @@
 package com.devhyeon.watchatask.network
 
-import android.util.Log
 import androidx.lifecycle.*
 import com.devhyeon.watchatask.constant.API_ERROR
 import com.devhyeon.watchatask.network.itunes.data.ITunesResponse
 import com.devhyeon.watchatask.network.itunes.ITunesAPI
+import com.devhyeon.watchatask.utils.DebugLog
 import com.devhyeon.watchatask.utils.Status
 import kotlinx.coroutines.*
-import java.security.acl.Owner
 
 class ITunesViewModel constructor(private val iTunesAPI: ITunesAPI) : ViewModel() {
-
+    //API 요청에 따른 상태 및 결과
     private val _trackResponse = MutableLiveData<Status<ITunesResponse>>()
     val trackResponse : LiveData<Status<ITunesResponse>> get() = _trackResponse
 
-    /**
-     * API 를 사용하여 검색 요청에 따른 응답을 처리하는 메소드
-     * */
+    /** API 를 사용하여 검색 요청에 따른 응답을 처리하는 메소드 */
     fun loadSearchData(owner: LifecycleOwner, term: String, entity: String) {
         owner.lifecycleScope.launch {
             var result : ITunesResponse? = null
             runCatching {
-                _trackResponse.value = Status.Run()
+                _trackResponse.value = Status.Run(null)
                 result = iTunesAPI.loadSearchData(term, entity)
             }.onSuccess {
-                result = iTunesAPI.loadSearchData(term, entity)
                 _trackResponse.value = Status.Success(result!!)
             }.onFailure {
                 _trackResponse.value = Status.Failure(API_ERROR, it.message!!)
+                DebugLog.e(TAG,it.message!!)
             }
         }
     }
 
 
-    /**
-     * API 를 사용하여 검색 요청에 따른 응답을 페이징으로 처리하기 위한 메소드
-     * */
-    fun loadSearchDataPagination(term: String, entity: String, limit: Long, offset: Long) {
-        viewModelScope.launch {
+    /** API 를 사용하여 검색 요청에 따른 응답을 페이징으로 처리하기 위한 메소드 */
+    fun loadSearchDataPagination(owner: LifecycleOwner, term: String, entity: String, limit: Long, offset: Long) {
+        owner.lifecycleScope.launch {
             var result : ITunesResponse? = null
             runCatching {
-                _trackResponse.value = Status.Run()
+                _trackResponse.value = Status.Run(null)
                 result = iTunesAPI.loadSearchDataPagination(term, entity, limit, offset)
             }.onSuccess {
                 _trackResponse.value = Status.Success(result!!)
@@ -48,12 +43,6 @@ class ITunesViewModel constructor(private val iTunesAPI: ITunesAPI) : ViewModel(
                 _trackResponse.value = Status.Failure(API_ERROR, it.message!!)
             }
         }
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        viewModelScope.cancel()
-        SupervisorJob().cancel()
     }
 
     companion object {
