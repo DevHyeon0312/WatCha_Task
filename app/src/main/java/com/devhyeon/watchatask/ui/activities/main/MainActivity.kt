@@ -1,14 +1,15 @@
 package com.devhyeon.watchatask.ui.activities.main
 
+import android.content.res.Configuration
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.devhyeon.watchatask.R
 import com.devhyeon.watchatask.constant.FRAGMENT_FAVORITE
 import com.devhyeon.watchatask.constant.FRAGMENT_SEARCH
 import com.devhyeon.watchatask.databinding.ActivityMainBinding
-import com.devhyeon.watchatask.network.ITunesViewModel
 import com.devhyeon.watchatask.ui.activities.base.BaseActivity
 import com.devhyeon.watchatask.ui.fragments.FavoriteFragment
 import com.devhyeon.watchatask.ui.fragments.SearchFragment
@@ -50,6 +51,12 @@ class MainActivity : BaseActivity() {
         init()
     }
 
+    /** 화면이 회전할 때 동작하는 메소드 */
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        DebugLog.d(TAG,"onConfigurationChanged()")
+    }
+
     /** MainActivity 동작에 필요한 부분 초기화  */
     private fun init() {
         binding.bottomNavigationView.run {
@@ -78,9 +85,11 @@ class MainActivity : BaseActivity() {
                         DebugLog.d(TAG, it.data.toString())
                         when(it.data) {
                             FRAGMENT_SEARCH -> {
+                                DebugLog.d(TAG, "FRAGMENT_SEARCH")
                                 changeFragment(searchFragment)
                             }
                             FRAGMENT_FAVORITE -> {
+                                DebugLog.d(TAG, "FRAGMENT_FAVORITE")
                                 changeFragment(favoriteFragment)
                             }
                         }

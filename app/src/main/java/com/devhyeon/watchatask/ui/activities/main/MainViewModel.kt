@@ -16,10 +16,10 @@ class MainViewModel : ViewModel(){
     private val _navigationData = MutableLiveData<Status<Int>>()
     val navigationData: LiveData<Status<Int>> get() = _navigationData
 
-    var result : Int = 0
 
     /** 클릭 이벤트에 따라 보여줘야하는 Fragment 선택 */
     fun clickNavigation(@IdRes id:Int) {
+        var result : Int = 0
         viewModelScope.launch {
             runCatching {
                 _navigationData.value = Status.Run(result)
