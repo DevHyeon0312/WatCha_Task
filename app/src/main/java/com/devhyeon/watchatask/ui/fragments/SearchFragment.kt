@@ -284,15 +284,9 @@ class SearchFragment : BaseFragment() , OnToggleClickListener {
         viewLifecycleOwner.lifecycle.let {
             //TIME_OUT 이후에 동작
             Handler().postDelayed({
-                //view 가 null 이 아닐 때,
-                if(!isNullView(view)) {
-                    //Fragment LifeCycle 이 RESUMED 상태일 때, viewStatus 가 RUN 상태를 유지하고 있다면,
-                    if(
-                        isViewStateResume(viewLifecycleOwner.lifecycle.currentState) &&
-                        isViewStatusRun(viewStatus)
-                    ) {
-                        viewVisibleFailure()
-                    }
+                //view 가 null 이 아닐 때 Fragment LifeCycle 이 RESUMED 상태일 때, viewStatus 가 RUN 상태를 유지하고 있다면,
+                if(!isNullView(view) && isViewStateResume(viewLifecycleOwner.lifecycle.currentState) && isViewStatusRun(viewStatus)) {
+                    viewVisibleFailure()
                 }
             }, TIME_OUT)
         }
