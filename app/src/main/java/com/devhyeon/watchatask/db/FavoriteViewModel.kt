@@ -4,8 +4,6 @@ import androidx.lifecycle.*
 import com.devhyeon.watchatask.constant.DB_ERROR
 import com.devhyeon.watchatask.db.favorite.FavoriteDatabase
 import com.devhyeon.watchatask.network.itunes.data.ITunesTrack
-import com.devhyeon.watchatask.ui.fragments.SearchFragment
-import com.devhyeon.watchatask.utils.DebugLog
 import com.devhyeon.watchatask.utils.Status
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -29,14 +27,11 @@ class FavoriteViewModel constructor(private val favoriteDatabase: FavoriteDataba
         CoroutineScope(Dispatchers.IO).launch {
             var tracks : List<ITunesTrack>? = null
             runCatching {
-                println("getAll RUN")
                 _trackAllData.postValue(Status.Run())
                 tracks = favoriteDatabase.favoriteDto().getAll()
             }.onSuccess {
-                println("getAll SUCCESS")
                 _trackAllData.postValue(Status.Success(tracks!!))
             }.onFailure {
-                println("getAll FAIL")
                 _trackAllData.postValue(Status.Failure(DB_ERROR, it.message!!))
             }
         }
