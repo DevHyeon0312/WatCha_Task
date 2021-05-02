@@ -24,6 +24,12 @@ class FavoriteListAdapter(val fragment : Fragment) : RecyclerView.Adapter<Recycl
         notifyDataSetChanged()
     }
 
+    private var mListener: OnToggleClickListener? = null
+
+    fun setOnToggleClickListener(listener: OnToggleClickListener?) {
+        mListener = listener
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val itemQuestionBinding = DataBindingUtil.inflate<ViewDataBinding>(
             LayoutInflater.from(parent.context), R.layout.item_track, parent, false
@@ -54,16 +60,8 @@ class FavoriteListAdapter(val fragment : Fragment) : RecyclerView.Adapter<Recycl
             }
             //즐겨찾기 버튼 클릭
             viewDataBinding.toggleStar.setOnClickListener {
-                mListener!!.onItemClick(it, track)
+                mListener!!.onToggleClick(it, track)
             }
         }
-    }
-
-    private var mListener: OnItemClickListener? = null
-    interface OnItemClickListener {
-        fun onItemClick(v: View?, track: ITunesTrack)
-    }
-    fun setOnItemClickListener(listener: OnItemClickListener?) {
-        mListener = listener
     }
 }

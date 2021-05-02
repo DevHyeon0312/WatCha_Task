@@ -10,6 +10,7 @@ import com.devhyeon.watchatask.databinding.FragmentFavoritelistBinding
 import com.devhyeon.watchatask.db.FavoriteViewModel
 import com.devhyeon.watchatask.network.itunes.data.ITunesTrack
 import com.devhyeon.watchatask.ui.adapters.FavoriteListAdapter
+import com.devhyeon.watchatask.ui.adapters.OnToggleClickListener
 import com.devhyeon.watchatask.ui.fragments.base.BaseFragment
 import com.devhyeon.watchatask.utils.DebugLog
 import com.devhyeon.watchatask.utils.Status
@@ -23,7 +24,7 @@ import org.koin.android.viewmodel.ext.android.viewModel
  * 2. 결과 출력
  * 3. 즐겨찾기 클릭에 따른 동작이벤트
  * */
-class FavoriteFragment : BaseFragment() , FavoriteListAdapter.OnItemClickListener {
+class FavoriteFragment : BaseFragment() , OnToggleClickListener {
     companion object {
         private val TAG = FavoriteFragment::class.java.name
     }
@@ -73,8 +74,8 @@ class FavoriteFragment : BaseFragment() , FavoriteListAdapter.OnItemClickListene
 
     /** 등록해야 하는 리스너 */
     private fun addListener() {
-        //리스트 아이템 클릭 리스너
-        mAdapter!!.setOnItemClickListener(this)
+        //토글버튼 클릭 리스너
+        mAdapter!!.setOnToggleClickListener(this)
 
         //새로고침 클릭 이벤트
         binding.btnRefresh.setOnClickListener {
@@ -150,8 +151,8 @@ class FavoriteFragment : BaseFragment() , FavoriteListAdapter.OnItemClickListene
         binding.errorView.toVisible()
     }
 
-    /** 리스트 아이템 클릭 리스너 */
-    override fun onItemClick(v: View?, track: ITunesTrack) {
+    /** 토클 클릭 리스너 */
+    override fun onToggleClick(v: View?, track: ITunesTrack) {
         if (track.favorit) {
             favoriteViewModel.addItem(track)
         } else {
