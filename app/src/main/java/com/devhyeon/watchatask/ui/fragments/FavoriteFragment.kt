@@ -102,7 +102,11 @@ class FavoriteFragment : Fragment() {
                 }
                 is Status.Success -> {
                     addFavoriteItem(it.data!!)
-                    viewVisibleSuccess()
+                    if(it.data.isEmpty()) {
+                        viewVisibleEmpty()
+                    } else {
+                        viewVisibleSuccess()
+                    }
                 }
                 is Status.Failure -> {
                     DebugLog.e(TAG,"favoriteObserve()", it.errorMessage!!)
@@ -124,10 +128,19 @@ class FavoriteFragment : Fragment() {
         binding.errorView.toGone()
     }
 
-    /** SUCCESS 상태 일때 보여주는 View */
+    /** SUCCESS 상태[즐겨찾기 있음] 일때 보여주는 View */
     private fun viewVisibleSuccess() {
         binding.loaderView.toGone()
         binding.contentsView.toVisible()
+        binding.favoriteView.toGone()
+        binding.errorView.toGone()
+    }
+
+    /** SUCCESS 상태[즐겨찾기 없음] 일때 보여주는 View */
+    private fun viewVisibleEmpty() {
+        binding.loaderView.toGone()
+        binding.contentsView.toGone()
+        binding.favoriteView.toVisible()
         binding.errorView.toGone()
     }
 

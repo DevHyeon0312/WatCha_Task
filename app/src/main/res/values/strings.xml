@@ -15,4 +15,5 @@
     
     <!-- View Text -->
     <string name="button_refresh">Refresh</string>
+    <string name="text_favorite_empty">No favorites found.</string>
 </resources>
