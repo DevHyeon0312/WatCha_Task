@@ -28,6 +28,10 @@ import org.koin.android.viewmodel.ext.android.viewModel
  * 4. 즐겨찾기 클릭에 따른 동작이벤트
  * */
 class SearchFragment : BaseFragment() , TrackListAdapter.OnItemClickListener {
+    companion object {
+        private val TAG = SearchFragment::class.java.name
+    }
+
     //바인딩
     private var _binding: FragmentTracklistBinding? = null
     private val binding get() = _binding!!
@@ -142,11 +146,7 @@ class SearchFragment : BaseFragment() , TrackListAdapter.OnItemClickListener {
             when(it) {
                 is Status.Run -> {
                     isRunState = true
-                    if(!isScrolled) {
-                        viewVisibleRun()
-                    } else {
-                        binding.rvTrackLoader.toVisible()
-                    }
+                    viewVisibleRun()
                 }
                 is Status.Success -> {
                     if(isRunState) {
@@ -175,11 +175,7 @@ class SearchFragment : BaseFragment() , TrackListAdapter.OnItemClickListener {
             when (it) {
                 is Status.Run -> {
                     isRunState = true
-                    if(!isScrolled) {
-                        viewVisibleRun()
-                    } else {
-                        binding.rvTrackLoader.toVisible()
-                    }
+                    viewVisibleRun()
                 }
                 is Status.Success -> {
                     if(isRunState) {
@@ -212,8 +208,22 @@ class SearchFragment : BaseFragment() , TrackListAdapter.OnItemClickListener {
         }
     }
 
+
+
     /** RUN 상태 일때 보여주는 View */
     private fun viewVisibleRun() {
+        if(!isScrolled) {
+            viewVisibleIsNotScroll()
+        } else {
+            viewVisibleIsScroll()
+        }
+    }
+    /** 스크롤인 경우에 보여주는 View */
+    private fun viewVisibleIsScroll() {
+        binding.rvTrackLoader.toVisible()
+    }
+    /** 스크롤이 아닌 경우에 보여주는 View */
+    private fun viewVisibleIsNotScroll() {
         binding.loaderView.toVisible()
         binding.contentsView.toGone()
         binding.errorView.toGone()
@@ -233,10 +243,6 @@ class SearchFragment : BaseFragment() , TrackListAdapter.OnItemClickListener {
         binding.contentsView.toGone()
         binding.errorView.toVisible()
         binding.rvTrackLoader.toGone()
-    }
-
-    companion object {
-        private val TAG = SearchFragment::class.java.name
     }
 
     /** 리스트 아이템 클릭 리스너 */

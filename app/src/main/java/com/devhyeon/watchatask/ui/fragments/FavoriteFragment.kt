@@ -24,6 +24,10 @@ import org.koin.android.viewmodel.ext.android.viewModel
  * 3. 즐겨찾기 클릭에 따른 동작이벤트
  * */
 class FavoriteFragment : BaseFragment() , FavoriteListAdapter.OnItemClickListener {
+    companion object {
+        private val TAG = FavoriteFragment::class.java.name
+    }
+
     //바인딩
     private var _binding: FragmentFavoritelistBinding? = null
     private val binding get() = _binding!!
@@ -144,10 +148,6 @@ class FavoriteFragment : BaseFragment() , FavoriteListAdapter.OnItemClickListene
         binding.loaderView.toGone()
         binding.contentsView.toGone()
         binding.errorView.toVisible()
-    }
-
-    companion object {
-        private val TAG = FavoriteFragment::class.java.name
     }
 
     /** 리스트 아이템 클릭 리스너 */
