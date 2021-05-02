@@ -3,7 +3,6 @@ package com.devhyeon.watchatask.ui.activities.main
 import android.content.res.Configuration
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.devhyeon.watchatask.R
@@ -85,11 +84,9 @@ class MainActivity : BaseActivity() {
                         DebugLog.d(TAG, it.data.toString())
                         when(it.data) {
                             FRAGMENT_SEARCH -> {
-                                DebugLog.d(TAG, "FRAGMENT_SEARCH")
                                 changeFragment(searchFragment)
                             }
                             FRAGMENT_FAVORITE -> {
-                                DebugLog.d(TAG, "FRAGMENT_FAVORITE")
                                 changeFragment(favoriteFragment)
                             }
                         }
