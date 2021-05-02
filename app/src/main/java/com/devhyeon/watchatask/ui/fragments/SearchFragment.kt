@@ -13,6 +13,7 @@ import com.devhyeon.watchatask.db.FavoriteViewModel
 import com.devhyeon.watchatask.network.ITunesViewModel
 import com.devhyeon.watchatask.network.itunes.data.ITunesTrack
 import com.devhyeon.watchatask.ui.adapters.TrackListAdapter
+import com.devhyeon.watchatask.ui.fragments.base.BaseFragment
 import com.devhyeon.watchatask.utils.DebugLog
 import com.devhyeon.watchatask.utils.Status
 import com.devhyeon.watchatask.utils.toGone
@@ -26,7 +27,7 @@ import org.koin.android.viewmodel.ext.android.viewModel
  * 3. 결과 출력
  * 4. 즐겨찾기 클릭에 따른 동작이벤트
  * */
-class SearchFragment : Fragment() {
+class SearchFragment : BaseFragment() , TrackListAdapter.OnItemClickListener {
     //바인딩
     private var _binding: FragmentTracklistBinding? = null
     private val binding get() = _binding!!
@@ -45,22 +46,18 @@ class SearchFragment : Fragment() {
     private val SCROLL_TOP_DOWN = 1 //스크롤 방향
     private var isScrolled = false  //스크롤여부
 
-
-
-    /** View 생성 */
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun initViewBinding(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) {
         _binding = FragmentTracklistBinding.inflate(inflater, container, false)
+    }
 
+    override fun getViewRoot(): View {
+        return binding.root
+    }
+
+    override fun init() {
         binding.rvTrackList.adapter = mAdapter
         mAdapter?.mPostList!!.clear()
-
         OFFSET = 0
-
-        return binding.root
     }
 
     /** View 생성이 완료되면 옵저버, 리스너 등록 */
@@ -88,15 +85,8 @@ class SearchFragment : Fragment() {
     /** 등록해야 하는 리스너 */
     private fun addListener() {
         //리스트 아이템 클릭 리스너
-        mAdapter!!.setOnItemClickListener(object : TrackListAdapter.OnItemClickListener {
-            override fun onItemClick(v: View?, track: ITunesTrack) {
-                if (track.favorit ) {
-                    favoriteViewModel.addItem(track)
-                } else {
-                    favoriteViewModel.removeItem(track)
-                }
-            }
-        })
+        mAdapter!!.setOnItemClickListener(this)
+
         //스크롤 리스너
         binding.rvTrackList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -247,5 +237,14 @@ class SearchFragment : Fragment() {
 
     companion object {
         private val TAG = SearchFragment::class.java.name
+    }
+
+    /** 리스트 아이템 클릭 리스너 */
+    override fun onItemClick(v: View?, track: ITunesTrack) {
+        if (track.favorit ) {
+            favoriteViewModel.addItem(track)
+        } else {
+            favoriteViewModel.removeItem(track)
+        }
     }
 }

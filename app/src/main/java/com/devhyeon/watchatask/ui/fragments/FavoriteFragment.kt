@@ -10,6 +10,7 @@ import com.devhyeon.watchatask.databinding.FragmentFavoritelistBinding
 import com.devhyeon.watchatask.db.FavoriteViewModel
 import com.devhyeon.watchatask.network.itunes.data.ITunesTrack
 import com.devhyeon.watchatask.ui.adapters.FavoriteListAdapter
+import com.devhyeon.watchatask.ui.fragments.base.BaseFragment
 import com.devhyeon.watchatask.utils.DebugLog
 import com.devhyeon.watchatask.utils.Status
 import com.devhyeon.watchatask.utils.toGone
@@ -22,7 +23,7 @@ import org.koin.android.viewmodel.ext.android.viewModel
  * 2. 결과 출력
  * 3. 즐겨찾기 클릭에 따른 동작이벤트
  * */
-class FavoriteFragment : Fragment() {
+class FavoriteFragment : BaseFragment() , FavoriteListAdapter.OnItemClickListener {
     //바인딩
     private var _binding: FragmentFavoritelistBinding? = null
     private val binding get() = _binding!!
@@ -33,17 +34,16 @@ class FavoriteFragment : Fragment() {
     //어댑터
     private var mAdapter: FavoriteListAdapter? = FavoriteListAdapter(this)
 
-    /** View 생성 */
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun initViewBinding(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) {
         _binding = FragmentFavoritelistBinding.inflate(inflater, container, false)
+    }
 
-        binding.rvTrackList.adapter = mAdapter
-
+    override fun getViewRoot(): View {
         return binding.root
+    }
+
+    override fun init() {
+        binding.rvTrackList.adapter = mAdapter
     }
 
     /** View 생성이 완료되면 옵저버, 리스너 등록 */
@@ -70,15 +70,7 @@ class FavoriteFragment : Fragment() {
     /** 등록해야 하는 리스너 */
     private fun addListener() {
         //리스트 아이템 클릭 리스너
-        mAdapter!!.setOnItemClickListener(object : FavoriteListAdapter.OnItemClickListener {
-            override fun onItemClick(v: View?, track: ITunesTrack) {
-                if (track.favorit) {
-                    favoriteViewModel.addItem(track)
-                } else {
-                    favoriteViewModel.removeItem(track)
-                }
-            }
-        })
+        mAdapter!!.setOnItemClickListener(this)
 
         //새로고침 클릭 이벤트
         binding.btnRefresh.setOnClickListener {
@@ -102,11 +94,7 @@ class FavoriteFragment : Fragment() {
                 }
                 is Status.Success -> {
                     addFavoriteItem(it.data!!)
-                    if(it.data.isEmpty()) {
-                        viewVisibleEmpty()
-                    } else {
-                        viewVisibleSuccess()
-                    }
+                    viewVisibleSuccess(it.data)
                 }
                 is Status.Failure -> {
                     DebugLog.e(TAG,"favoriteObserve()", it.errorMessage!!)
@@ -128,14 +116,21 @@ class FavoriteFragment : Fragment() {
         binding.errorView.toGone()
     }
 
+    /** SUCCESS DATA 에 따라 보여주는 View */
+    private fun viewVisibleSuccess(list : List<ITunesTrack>) {
+        if(list.isEmpty()) {
+            viewVisibleEmpty()
+        } else {
+            viewVisibleNotEmpty()
+        }
+    }
     /** SUCCESS 상태[즐겨찾기 있음] 일때 보여주는 View */
-    private fun viewVisibleSuccess() {
+    private fun viewVisibleNotEmpty() {
         binding.loaderView.toGone()
         binding.contentsView.toVisible()
         binding.favoriteView.toGone()
         binding.errorView.toGone()
     }
-
     /** SUCCESS 상태[즐겨찾기 없음] 일때 보여주는 View */
     private fun viewVisibleEmpty() {
         binding.loaderView.toGone()
@@ -153,5 +148,14 @@ class FavoriteFragment : Fragment() {
 
     companion object {
         private val TAG = FavoriteFragment::class.java.name
+    }
+
+    /** 리스트 아이템 클릭 리스너 */
+    override fun onItemClick(v: View?, track: ITunesTrack) {
+        if (track.favorit) {
+            favoriteViewModel.addItem(track)
+        } else {
+            favoriteViewModel.removeItem(track)
+        }
     }
 }
