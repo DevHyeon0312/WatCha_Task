@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">iTunes Search</string>
+    <!-- menu Text -->
+    <string name="menu_search">검색</string>
+    <string name="menu_star">즐겨찾기</string>
+
+    <!-- tools Text -->
+    <string name="track_name">트랙</string>
+    <string name="collection_name">앨범</string>
+    <string name="artist_name">아티스트</string>
+
+    <!-- Error Text -->
+    <string name="error_message">에러가 발생하였습니다. 다시 시도해주세요.</string>
+
+    <!-- View Text -->
+    <string name="button_refresh">새로고침</string>
+</resources>
