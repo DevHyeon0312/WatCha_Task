@@ -13,7 +13,7 @@ import com.devhyeon.watchatask.network.itunes.data.ITunesTrack
 @ColumnInfo(name = "collectionName")   val collectionName  : String,
 @ColumnInfo(name = "trackName")        val trackName       : String,
 @ColumnInfo(name = "artworkUrl100")    val artworkUrl100   : String,
-@ColumnInfo(name = "artworkUrl100")    var favorit         : Boolean = false
+@ColumnInfo(name = "favorit")          var favorit         : Boolean = false
  * */
 
 @Dao

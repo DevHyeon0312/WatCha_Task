@@ -1,31 +1,28 @@
 package com.devhyeon.watchatask.db
 
 import androidx.lifecycle.*
-import com.devhyeon.watchatask.constant.API_ERROR
+import com.devhyeon.watchatask.constant.DB_ERROR
 import com.devhyeon.watchatask.db.favorite.FavoriteDatabase
-import com.devhyeon.watchatask.network.itunes.data.ITunesResponse
 import com.devhyeon.watchatask.network.itunes.data.ITunesTrack
+import com.devhyeon.watchatask.ui.fragments.SearchFragment
+import com.devhyeon.watchatask.utils.DebugLog
 import com.devhyeon.watchatask.utils.Status
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 
 class FavoriteViewModel constructor(private val favoriteDatabase: FavoriteDatabase) : ViewModel() {
+    //DB 아이템 조회에 따른 상태 및 결과
     private val _trackAllData = MutableLiveData<Status<List<ITunesTrack>>>()
     val trackAllData : LiveData<Status<List<ITunesTrack>>> get() = _trackAllData
 
+    //DB 아이템 삽입에 따른 상태 및 결과
     private val _trackInsertData = MutableLiveData<Status<Boolean>>()
     val trackInsertData : LiveData<Status<Boolean>> get() = _trackInsertData
 
+    //DB 아이템 삭제에 따른 상태 및 결과
     private val _trackRemoveData = MutableLiveData<Status<Boolean>>()
     val trackRemoveData : LiveData<Status<Boolean>> get() = _trackRemoveData
-
-    private val _trackFindData = MutableLiveData<Status<ITunesTrack>>()
-    val trackFindData : LiveData<Status<ITunesTrack>> get() = _trackFindData
-
-    private val _trackChangeData = MutableLiveData<Status<List<ITunesTrack>>>()
-    val trackChangeData : LiveData<Status<List<ITunesTrack>>> get() = _trackChangeData
 
     /** DataBase 에 저장된 모든 데이터를 가져오는 메소드 */
     fun getAll() {
@@ -40,7 +37,7 @@ class FavoriteViewModel constructor(private val favoriteDatabase: FavoriteDataba
                 _trackAllData.postValue(Status.Success(tracks!!))
             }.onFailure {
                 println("getAll FAIL")
-                _trackAllData.postValue(Status.Failure(-3,it.message!!))
+                _trackAllData.postValue(Status.Failure(DB_ERROR, it.message!!))
             }
         }
     }
@@ -49,12 +46,12 @@ class FavoriteViewModel constructor(private val favoriteDatabase: FavoriteDataba
     fun addItem(iTunesTrack: ITunesTrack) {
         CoroutineScope(Dispatchers.IO).launch {
             runCatching {
-                _trackInsertData.postValue(Status.Run())
+                _trackInsertData.postValue(Status.Run(null))
                 favoriteDatabase.favoriteDto().insertAll(iTunesTrack)
             }.onSuccess {
                 _trackInsertData.postValue(Status.Success(true))
             }.onFailure {
-                _trackInsertData.postValue(Status.Failure(-3,it.message!!))
+                _trackInsertData.postValue(Status.Failure(DB_ERROR, it.message!!))
             }
         }
     }
@@ -63,13 +60,14 @@ class FavoriteViewModel constructor(private val favoriteDatabase: FavoriteDataba
     fun removeItem(iTunesTrack: ITunesTrack) {
         CoroutineScope(Dispatchers.IO).launch {
             runCatching {
-                _trackRemoveData.postValue(Status.Run())
+                _trackRemoveData.postValue(Status.Run(null))
                 favoriteDatabase.favoriteDto().delete(iTunesTrack)
             }.onSuccess {
                 _trackRemoveData.postValue(Status.Success(true))
             }.onFailure {
-                _trackRemoveData.postValue(Status.Failure(-3,it.message!!))
+                _trackRemoveData.postValue(Status.Failure(DB_ERROR, it.message!!))
             }
         }
     }
+
 }

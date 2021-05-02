@@ -12,21 +12,32 @@ import com.devhyeon.watchatask.network.ITunesViewModel
 import com.devhyeon.watchatask.ui.activities.base.BaseActivity
 import com.devhyeon.watchatask.ui.fragments.FavoriteFragment
 import com.devhyeon.watchatask.ui.fragments.SearchFragment
+import com.devhyeon.watchatask.utils.DebugLog
 import com.devhyeon.watchatask.utils.Status
 import org.koin.android.viewmodel.ext.android.viewModel
 
+/**
+ * bottomNavigationView 클릭에 따라 화면에 보여줄 Fragment 를 교체하며 보여주는 MainActivity
+ * 1. Create
+ * 2. SearchFragment 가 첫 시작
+ * 3. BottomNavigationClick 으로 Fragment 교체
+ * */
 class MainActivity : BaseActivity() {
     private lateinit var binding: ActivityMainBinding
 
+    //BottomNavigation Click 에 따라 처리하는 ViewModel
     private val mainViewModel: MainViewModel by viewModel()
 
+    //화면에 보여줄 Fragment
     private val searchFragment by lazy { SearchFragment() }
     private val favoriteFragment by lazy { FavoriteFragment() }
 
+    //Binding
     override fun initViewBinding() {
         binding = ActivityMainBinding.inflate(layoutInflater)
     }
 
+    //Layout 설정
     override fun getViewRoot(): View {
         return binding.root
     }
@@ -36,6 +47,11 @@ class MainActivity : BaseActivity() {
 
         addObserver()
 
+        init()
+    }
+
+    /** MainActivity 동작에 필요한 부분 초기화  */
+    private fun init() {
         binding.bottomNavigationView.run {
             setOnNavigationItemSelectedListener {
                 mainViewModel.clickNavigation(it.itemId)
@@ -45,17 +61,21 @@ class MainActivity : BaseActivity() {
         }
     }
 
-
+    /** 옵저버 추가 */
     private fun addObserver() {
         navigationObserve()
     }
 
+    /** bottomNavigation Click 에 따른 상태 옵저버 */
     private fun navigationObserve() {
         with(mainViewModel) {
             navigationData.observe(this@MainActivity, Observer {
                 when(it) {
-                    is Status.Run -> {}
+                    is Status.Run -> {
+                        DebugLog.d(TAG, it.data.toString())
+                    }
                     is Status.Success -> {
+                        DebugLog.d(TAG, it.data.toString())
                         when(it.data) {
                             FRAGMENT_SEARCH -> {
                                 changeFragment(searchFragment)
@@ -65,13 +85,20 @@ class MainActivity : BaseActivity() {
                             }
                         }
                     }
-                    is Status.Failure -> {}
+                    is Status.Failure -> {
+                        DebugLog.e(TAG, it.errorMessage!!)
+                    }
                 }
             })
         }
     }
 
+    /** 프래그먼트 교체 */
     private fun changeFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction().replace(R.id.fl_container, fragment).commit()
+    }
+
+    companion object {
+        private val TAG = MainActivity::class.java.name
     }
 }

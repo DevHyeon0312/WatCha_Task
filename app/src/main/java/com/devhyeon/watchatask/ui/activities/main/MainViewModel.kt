@@ -9,7 +9,6 @@ import com.devhyeon.watchatask.R
 import com.devhyeon.watchatask.constant.FRAGMENT_FAVORITE
 import com.devhyeon.watchatask.constant.FRAGMENT_SEARCH
 import com.devhyeon.watchatask.constant.NAVIGATION_CLICK_ERROR
-import com.devhyeon.watchatask.network.itunes.data.ITunesResponse
 import com.devhyeon.watchatask.utils.Status
 import kotlinx.coroutines.launch
 
@@ -19,6 +18,7 @@ class MainViewModel : ViewModel(){
 
     var result : Int = 0
 
+    /** 클릭 이벤트에 따라 보여줘야하는 Fragment 선택 */
     fun clickNavigation(@IdRes id:Int) {
         viewModelScope.launch {
             runCatching {

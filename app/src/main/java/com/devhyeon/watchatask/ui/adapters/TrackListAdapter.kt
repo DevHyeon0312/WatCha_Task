@@ -12,6 +12,12 @@ import com.devhyeon.watchatask.R
 import com.devhyeon.watchatask.databinding.ItemTrackBinding
 import com.devhyeon.watchatask.network.itunes.data.ITunesTrack
 
+/**
+ * 검색 항목을 보여주기 위한 ListAdapter
+ * 1. Create
+ * 2. 리스트 변경에 따른 업데이트는 addItem 에서 수동으로 처리
+ * 3. 클릭 이벤트는 interface 구현체에게 전달하여 외부에서 처리
+ * */
 class TrackListAdapter constructor(val fragment : Fragment) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var mPostList: MutableList<ITunesTrack> = mutableListOf()
 
@@ -32,11 +38,8 @@ class TrackListAdapter constructor(val fragment : Fragment) : RecyclerView.Adapt
 
     fun addItem(item: ITunesTrack) {
         mPostList.add(item)
+        //add 되는 아이템만 변경해주는 것이 효율적. notifyDataSetChanged() 는 Item 하나를 교체할때도 전체를 Update 하므로 비효율적
         notifyItemChanged(itemCount)
-    }
-    fun addItem(list: List<ITunesTrack>) {
-        mPostList.addAll(list)
-        notifyDataSetChanged()
     }
 
     private inner class TrackListViewHolder(private val viewDataBinding: ViewDataBinding) :

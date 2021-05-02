@@ -10,11 +10,18 @@ import com.devhyeon.watchatask.databinding.FragmentFavoritelistBinding
 import com.devhyeon.watchatask.db.FavoriteViewModel
 import com.devhyeon.watchatask.network.itunes.data.ITunesTrack
 import com.devhyeon.watchatask.ui.adapters.FavoriteListAdapter
+import com.devhyeon.watchatask.utils.DebugLog
 import com.devhyeon.watchatask.utils.Status
 import com.devhyeon.watchatask.utils.toGone
 import com.devhyeon.watchatask.utils.toVisible
 import org.koin.android.viewmodel.ext.android.viewModel
 
+/**
+ * 즐겨찾기한 대상을 보여주는 Fragment
+ * 1. DB 에서 즐겨찾기된 아이템 get
+ * 2. 결과 출력
+ * 3. 즐겨찾기 클릭에 따른 동작이벤트
+ * */
 class FavoriteFragment : Fragment() {
     //바인딩
     private var _binding: FragmentFavoritelistBinding? = null
@@ -26,6 +33,7 @@ class FavoriteFragment : Fragment() {
     //어댑터
     private var mAdapter: FavoriteListAdapter? = FavoriteListAdapter(this)
 
+    /** View 생성 */
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -56,7 +64,7 @@ class FavoriteFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-        favoriteViewModel.trackChangeData.removeObservers(viewLifecycleOwner)
+        favoriteViewModel.trackAllData.removeObservers(viewLifecycleOwner)
     }
 
     /** 등록해야 하는 리스너 */
@@ -91,6 +99,7 @@ class FavoriteFragment : Fragment() {
                     viewVisibleSuccess()
                 }
                 is Status.Failure -> {
+                    DebugLog.e(TAG,"favoriteObserve()", it.errorMessage!!)
                     viewVisibleFailure()
                 }
             }
@@ -121,5 +130,9 @@ class FavoriteFragment : Fragment() {
         binding.loaderView.toGone()
         binding.contentsView.toGone()
         binding.errorView.toVisible()
+    }
+
+    companion object {
+        private val TAG = FavoriteFragment::class.java.name
     }
 }

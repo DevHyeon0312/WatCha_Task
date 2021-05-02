@@ -10,12 +10,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.devhyeon.watchatask.R
 import com.devhyeon.watchatask.databinding.ItemTrackBinding
-import com.devhyeon.watchatask.db.FavoriteViewModel
 import com.devhyeon.watchatask.network.itunes.data.ITunesTrack
-import org.koin.android.viewmodel.compat.ScopeCompat.viewModel
-import org.koin.android.viewmodel.ext.android.viewModel
 import kotlin.properties.Delegates
 
+/**
+ * 즐겨찾기 항목을 보여주기 위한 ListAdapter
+ * 1. Create
+ * 2. 리스트 변경에 따른 업데이트를 Delegates.observable 로 처리
+ * 3. 클릭 이벤트는 interface 구현체에게 전달하여 외부에서 처리
+ * */
 class FavoriteListAdapter(val fragment : Fragment) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var mPostList: List<ITunesTrack> by Delegates.observable(emptyList()) { _, _, _ ->
         notifyDataSetChanged()

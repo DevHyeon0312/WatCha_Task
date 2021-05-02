@@ -4,21 +4,26 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ToggleButton
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import com.bumptech.glide.Glide
 import com.devhyeon.watchatask.databinding.FragmentTracklistBinding
 import com.devhyeon.watchatask.db.FavoriteViewModel
 import com.devhyeon.watchatask.network.ITunesViewModel
 import com.devhyeon.watchatask.network.itunes.data.ITunesTrack
 import com.devhyeon.watchatask.ui.adapters.TrackListAdapter
+import com.devhyeon.watchatask.utils.DebugLog
 import com.devhyeon.watchatask.utils.Status
 import com.devhyeon.watchatask.utils.toGone
 import com.devhyeon.watchatask.utils.toVisible
-import kotlinx.coroutines.runBlocking
 import org.koin.android.viewmodel.ext.android.viewModel
 
+/**
+ * 검색조회를 보여주는 Fragment
+ * 1. 검색 API run
+ * 2. DB 에서 즐겨찾기된 아이템 get
+ * 3. 결과 출력
+ * 4. 즐겨찾기 클릭에 따른 동작이벤트
+ * */
 class SearchFragment : Fragment() {
     //바인딩
     private var _binding: FragmentTracklistBinding? = null
@@ -34,6 +39,7 @@ class SearchFragment : Fragment() {
     private val TREM  = "greenday"  //검색명(문제 조건에 따라 greenday 고정)
     private val ENTRY = "song"      //종류(문제 조건에 따라 song 고정)
 
+    /** View 생성 */
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -57,7 +63,6 @@ class SearchFragment : Fragment() {
     /** Resume 상태에 진입하면, 데이터 수신 */
     override fun onResume() {
         super.onResume()
-//        favoriteViewModel.getAll()
         iTunesViewModel.loadSearchData(viewLifecycleOwner,TREM, ENTRY)
     }
 
@@ -66,7 +71,7 @@ class SearchFragment : Fragment() {
         super.onDestroyView()
         _binding = null
         iTunesViewModel.trackResponse.removeObservers(viewLifecycleOwner)
-        favoriteViewModel.trackChangeData.removeObservers(viewLifecycleOwner)
+        favoriteViewModel.trackAllData.removeObservers(viewLifecycleOwner)
     }
 
     /** 등록해야 하는 리스너 */
@@ -124,6 +129,7 @@ class SearchFragment : Fragment() {
                     }
                 }
                 is Status.Failure -> {
+                    DebugLog.e(TAG,"favoriteObserve()", it.errorMessage!!)
                     viewVisibleFailure()
                 }
             }
@@ -150,6 +156,7 @@ class SearchFragment : Fragment() {
                     }
                 }
                 is Status.Failure -> {
+                    DebugLog.e(TAG,"iTunesObserve()", it.errorMessage!!)
                     viewVisibleFailure()
                 }
             }
@@ -192,4 +199,7 @@ class SearchFragment : Fragment() {
         binding.errorView.toVisible()
     }
 
+    companion object {
+        private val TAG = SearchFragment::class.java.name
+    }
 }
