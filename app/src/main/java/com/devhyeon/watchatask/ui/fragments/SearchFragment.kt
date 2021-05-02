@@ -42,8 +42,10 @@ class SearchFragment : Fragment() {
     private val ENTRY = "song"      //종류(문제 조건에 따라 song 고정)
     private val LIMIT: Long = 10    //한번 조회할 때 가져올 개수
     private var OFFSET: Long = 0   //시작위치
-
     private val SCROLL_TOP_DOWN = 1 //스크롤 방향
+    private var isScrolled = false  //스크롤여부
+
+
 
     /** View 생성 */
     override fun onCreateView(
@@ -107,6 +109,7 @@ class SearchFragment : Fragment() {
 
                 // 스크롤이 끝에 도달한 경우
                 if (!binding.rvTrackList.canScrollVertically(SCROLL_TOP_DOWN) && lastVisibleItemPosition == itemTotalCount) {
+                    isScrolled = true
                     iTunesViewModel.loadSearchDataPagination(viewLifecycleOwner,TREM, ENTRY,LIMIT,OFFSET)
                     OFFSET+=(LIMIT+1)
                 }
@@ -141,8 +144,10 @@ class SearchFragment : Fragment() {
         favoriteViewModel.trackAllData.observe(viewLifecycleOwner, Observer {
             when(it) {
                 is Status.Run -> {
-                    viewVisibleRun()
                     isRunState = true
+                    if(!isScrolled) {
+                        viewVisibleRun()
+                    }
                 }
                 is Status.Success -> {
                     if(isRunState) {
@@ -171,7 +176,9 @@ class SearchFragment : Fragment() {
             when (it) {
                 is Status.Run -> {
                     isRunState = true
-                    viewVisibleRun()
+                    if(!isScrolled) {
+                        viewVisibleRun()
+                    }
                 }
                 is Status.Success -> {
                     if(isRunState) {
