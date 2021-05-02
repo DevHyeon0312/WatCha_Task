@@ -40,7 +40,7 @@ class SearchFragment : Fragment() {
 
     private val TREM  = "greenday"  //검색명(문제 조건에 따라 greenday 고정)
     private val ENTRY = "song"      //종류(문제 조건에 따라 song 고정)
-    private val LIMIT: Long = 10    //한번 조회할 때 가져올 개수
+    private val LIMIT: Long = 50    //한번 조회할 때 가져올 개수
     private var OFFSET: Long = 0   //시작위치
     private val SCROLL_TOP_DOWN = 1 //스크롤 방향
     private var isScrolled = false  //스크롤여부
@@ -107,7 +107,7 @@ class SearchFragment : Fragment() {
                 //아이템 총 개수
                 val itemTotalCount = recyclerView.adapter!!.itemCount-1
 
-                // 스크롤이 끝에 도달한 경우
+                // 스크롤이 중간을 넘어간 경우
                 if (!binding.rvTrackList.canScrollVertically(SCROLL_TOP_DOWN) && lastVisibleItemPosition == itemTotalCount) {
                     isScrolled = true
                     iTunesViewModel.loadSearchDataPagination(viewLifecycleOwner,TREM, ENTRY,LIMIT,OFFSET)
@@ -147,6 +147,8 @@ class SearchFragment : Fragment() {
                     isRunState = true
                     if(!isScrolled) {
                         viewVisibleRun()
+                    } else {
+                        binding.rvTrackLoader.toVisible()
                     }
                 }
                 is Status.Success -> {
@@ -178,6 +180,8 @@ class SearchFragment : Fragment() {
                     isRunState = true
                     if(!isScrolled) {
                         viewVisibleRun()
+                    } else {
+                        binding.rvTrackLoader.toVisible()
                     }
                 }
                 is Status.Success -> {
@@ -223,6 +227,7 @@ class SearchFragment : Fragment() {
         binding.loaderView.toGone()
         binding.contentsView.toVisible()
         binding.errorView.toGone()
+        binding.rvTrackLoader.toGone()
     }
 
     /** FAIL 상태 일때 보여주는 View */
@@ -230,6 +235,7 @@ class SearchFragment : Fragment() {
         binding.loaderView.toGone()
         binding.contentsView.toGone()
         binding.errorView.toVisible()
+        binding.rvTrackLoader.toGone()
     }
 
     companion object {

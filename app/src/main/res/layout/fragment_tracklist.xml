@@ -50,6 +50,14 @@
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:listitem="@layout/item_track"/>
 
+        <ProgressBar
+            android:id="@+id/rv_track_loader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/alphadark"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"/>
     </RelativeLayout>
 
     <!-- error 상태에 보여줄 ViewGroup -->
