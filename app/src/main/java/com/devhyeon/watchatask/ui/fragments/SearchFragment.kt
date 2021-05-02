@@ -22,10 +22,7 @@ import com.devhyeon.watchatask.network.itunes.data.ITunesTrack
 import com.devhyeon.watchatask.ui.adapters.OnToggleClickListener
 import com.devhyeon.watchatask.ui.adapters.TrackListAdapter
 import com.devhyeon.watchatask.ui.fragments.base.BaseFragment
-import com.devhyeon.watchatask.utils.DebugLog
-import com.devhyeon.watchatask.utils.Status
-import com.devhyeon.watchatask.utils.toGone
-import com.devhyeon.watchatask.utils.toVisible
+import com.devhyeon.watchatask.utils.*
 import kotlinx.coroutines.launch
 import org.koin.android.viewmodel.ext.android.viewModel
 import java.util.*
@@ -293,9 +290,12 @@ class SearchFragment : BaseFragment() , OnToggleClickListener {
             //TIME_OUT 이후에 동작
             Handler().postDelayed({
                 //view 가 null 이 아닐 때,
-                if(view != null) {
+                if(isNullView(view)) {
                     //Fragment LifeCycle 이 RESUMED 상태일 때, viewStatus 가 RUN 상태를 유지하고 있다면,
-                    if(viewLifecycleOwner.lifecycle.currentState == Lifecycle.State.RESUMED && viewStatus == VIEW_STATUS_RUN ) {
+                    if(
+                        isViewStateResume(viewLifecycleOwner.lifecycle.currentState) &&
+                        isViewStatusRun(viewStatus)
+                    ) {
                         viewVisibleFailure()
                     }
                 }
