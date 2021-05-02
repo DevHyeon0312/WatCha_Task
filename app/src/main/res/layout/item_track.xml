@@ -42,6 +42,8 @@
                 android:layout_margin="@dimen/margin_text_track_area"
                 android:textStyle="bold"
                 android:text="@{track.trackName}"
+                android:maxLines="1"
+                android:ellipsize="end"
                 tools:text="@string/track_name"/>
 
             <TextView
@@ -51,6 +53,8 @@
                 android:layout_margin="@dimen/margin_text_track_area"
                 android:textSize="@dimen/font_size_collection_name"
                 android:text="@{track.collectionName}"
+                android:maxLines="1"
+                android:ellipsize="end"
                 tools:text="@string/collection_name"/>
 
             <TextView
@@ -60,6 +64,8 @@
                 android:layout_margin="@dimen/margin_text_track_area"
                 android:textSize="@dimen/font_size_artist_name"
                 android:text="@{track.artistName}"
+                android:maxLines="1"
+                android:ellipsize="end"
                 tools:text="@string/artist_name"/>
         </LinearLayout>
 
