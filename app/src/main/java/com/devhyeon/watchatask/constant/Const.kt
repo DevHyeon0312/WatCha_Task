@@ -1,6 +1,7 @@
 package com.devhyeon.watchatask.constant
 
 const val ITUNES_BASE_URL = "https://itunes.apple.com"
+const val DB_NAME = "favoriteTrack.db"
 const val FRAGMENT_SEARCH = 1
 const val FRAGMENT_FAVORITE = 2
 

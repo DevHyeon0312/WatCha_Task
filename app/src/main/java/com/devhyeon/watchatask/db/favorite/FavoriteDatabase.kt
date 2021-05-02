@@ -2,6 +2,7 @@ package com.devhyeon.watchatask.db.favorite
 
 import android.content.Context
 import androidx.room.*
+import com.devhyeon.watchatask.constant.DB_NAME
 import com.devhyeon.watchatask.network.itunes.data.ITunesTrack
 
 @Database(entities = arrayOf(ITunesTrack::class), version = 1)
@@ -15,7 +16,7 @@ abstract class FavoriteDatabase : RoomDatabase() {
             if (INSTANCE == null) {
                 synchronized(FavoriteDatabase::class) {
                     INSTANCE = Room.databaseBuilder(context.applicationContext,
-                        FavoriteDatabase::class.java, "favoriteTrack.db")
+                        FavoriteDatabase::class.java, DB_NAME)
                         .fallbackToDestructiveMigration()
                         .build()
                 }

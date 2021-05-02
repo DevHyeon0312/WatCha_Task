@@ -17,12 +17,12 @@ import com.google.gson.annotations.SerializedName
 
 @Entity(tableName = "favorite")
 data class ITunesTrack(
-    @ColumnInfo(name = "artistId") @SerializedName("artistId")         val artistId        : Long,
-    @ColumnInfo(name = "collectionId") @SerializedName("collectionId")     val collectionId    : Long,
-    @PrimaryKey @SerializedName("trackId")          val trackId         : Long,
-    @ColumnInfo(name = "artistName") @SerializedName("artistName")       val artistName      : String,
-    @ColumnInfo(name = "collectionName") @SerializedName("collectionName")   val collectionName  : String,
-    @ColumnInfo(name = "trackName") @SerializedName("trackName")        val trackName       : String,
+    @ColumnInfo(name = "artistId")      @SerializedName("artistId")         val artistId        : Long,
+    @ColumnInfo(name = "collectionId")  @SerializedName("collectionId")     val collectionId    : Long,
+    @PrimaryKey                         @SerializedName("trackId")          val trackId         : Long,
+    @ColumnInfo(name = "artistName")    @SerializedName("artistName")       val artistName      : String,
+    @ColumnInfo(name = "collectionName")@SerializedName("collectionName")   val collectionName  : String,
+    @ColumnInfo(name = "trackName")     @SerializedName("trackName")        val trackName       : String,
     @ColumnInfo(name = "artworkUrl100") @SerializedName("artworkUrl100")    val artworkUrl100   : String,
     var favorit : Boolean = false
 )
