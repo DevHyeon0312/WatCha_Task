@@ -145,7 +145,7 @@ class SearchFragment : BaseFragment() , OnToggleClickListener {
         return favoriteMap.containsKey(track.trackId)
     }
 
-    /** API 항목 추가 */
+    /** API 응답결과 아이템 추가 */
     private fun addApiItem(list : List<ITunesTrack>?) {
         if(list != null) {
             //즐겨찾기 DB에 있는지 판단하여 구분하여 addItem
