@@ -79,6 +79,12 @@ class FavoriteFragment : Fragment() {
                 }
             }
         })
+
+        //새로고침 클릭 이벤트
+        binding.btnRefresh.setOnClickListener {
+            viewVisibleRun()
+            favoriteViewModel.getAll()
+        }
     }
 
     /** 등록해야 하는 옵저버 */

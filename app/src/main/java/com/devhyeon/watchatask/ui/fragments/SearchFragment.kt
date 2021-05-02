@@ -115,6 +115,13 @@ class SearchFragment : Fragment() {
                 }
             }
         })
+
+        //새로고침 클릭 이벤트
+        binding.btnRefresh.setOnClickListener {
+            OFFSET = 0
+            iTunesViewModel.loadSearchDataPagination(viewLifecycleOwner,TREM, ENTRY,LIMIT,OFFSET)
+            OFFSET+=(LIMIT+1)
+        }
     }
 
     /** 등록해야 하는 옵저버 */
