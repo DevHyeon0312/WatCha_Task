@@ -5,10 +5,8 @@ import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.devhyeon.watchatask.constant.TIME_OUT
@@ -23,11 +21,8 @@ import com.devhyeon.watchatask.ui.adapters.OnToggleClickListener
 import com.devhyeon.watchatask.ui.adapters.TrackListAdapter
 import com.devhyeon.watchatask.ui.fragments.base.BaseFragment
 import com.devhyeon.watchatask.utils.*
-import kotlinx.coroutines.launch
 import org.koin.android.viewmodel.ext.android.viewModel
-import java.util.*
 import kotlin.collections.HashMap
-import kotlin.concurrent.timer
 
 /**
  * 검색조회를 보여주는 Fragment
@@ -290,7 +285,7 @@ class SearchFragment : BaseFragment() , OnToggleClickListener {
             //TIME_OUT 이후에 동작
             Handler().postDelayed({
                 //view 가 null 이 아닐 때,
-                if(isNullView(view)) {
+                if(!isNullView(view)) {
                     //Fragment LifeCycle 이 RESUMED 상태일 때, viewStatus 가 RUN 상태를 유지하고 있다면,
                     if(
                         isViewStateResume(viewLifecycleOwner.lifecycle.currentState) &&
