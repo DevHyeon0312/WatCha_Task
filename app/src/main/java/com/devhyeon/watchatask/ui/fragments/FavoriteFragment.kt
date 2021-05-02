@@ -51,11 +51,21 @@ class FavoriteFragment : BaseFragment() , OnToggleClickListener {
         binding.rvTrackList.adapter = mAdapter
     }
 
-    /** View 생성이 완료되면 옵저버, 리스너 등록 */
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        addObserver()
-        addListener()
+    /** 등록해야 하는 리스너 */
+    override fun addListener() {
+        //토글버튼 클릭 리스너
+        mAdapter!!.setOnToggleClickListener(this)
+
+        //새로고침 클릭 이벤트
+        binding.btnRefresh.setOnClickListener {
+            viewVisibleRun()
+            favoriteViewModel.getAll()
+        }
+    }
+
+    /** 등록해야 하는 옵저버 */
+    override fun addObserver() {
+        favoriteObserve()
     }
 
     /** Resume 상태에 진입하면, 데이터 수신 */
@@ -72,22 +82,6 @@ class FavoriteFragment : BaseFragment() , OnToggleClickListener {
         favoriteViewModel.trackAllData.removeObservers(viewLifecycleOwner)
     }
 
-    /** 등록해야 하는 리스너 */
-    private fun addListener() {
-        //토글버튼 클릭 리스너
-        mAdapter!!.setOnToggleClickListener(this)
-
-        //새로고침 클릭 이벤트
-        binding.btnRefresh.setOnClickListener {
-            viewVisibleRun()
-            favoriteViewModel.getAll()
-        }
-    }
-
-    /** 등록해야 하는 옵저버 */
-    private fun addObserver() {
-        favoriteObserve()
-    }
 
     /** DB 결과 옵저버 */
     private fun favoriteObserve() {

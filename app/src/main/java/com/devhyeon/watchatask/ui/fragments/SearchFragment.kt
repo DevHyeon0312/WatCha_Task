@@ -65,30 +65,8 @@ class SearchFragment : BaseFragment() , OnToggleClickListener {
         OFFSET = 0
     }
 
-    /** View 생성이 완료되면 옵저버, 리스너 등록 */
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        addObserver()
-        addListener()
-    }
-
-    /** Resume 상태에 진입하면, 데이터 수신 */
-    override fun onResume() {
-        super.onResume()
-        iTunesViewModel.loadSearchDataPagination(viewLifecycleOwner,TREM, ENTRY,LIMIT,OFFSET)
-        OFFSET+=(LIMIT+1)
-    }
-
-    /** View 가 제거될 때 함께 제거 */
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-        iTunesViewModel.trackResponse.removeObservers(viewLifecycleOwner)
-        favoriteViewModel.trackAllData.removeObservers(viewLifecycleOwner)
-    }
-
     /** 등록해야 하는 리스너 */
-    private fun addListener() {
+    override fun addListener() {
         //토글버튼 클릭 리스너
         mAdapter!!.setOnToggleClickListener(this)
 
@@ -120,9 +98,24 @@ class SearchFragment : BaseFragment() , OnToggleClickListener {
     }
 
     /** 등록해야 하는 옵저버 */
-    private fun addObserver() {
+    override fun addObserver() {
         iTunesObserve()
         favoriteObserve()
+    }
+
+    /** Resume 상태에 진입하면, 데이터 수신 */
+    override fun onResume() {
+        super.onResume()
+        iTunesViewModel.loadSearchDataPagination(viewLifecycleOwner,TREM, ENTRY,LIMIT,OFFSET)
+        OFFSET+=(LIMIT+1)
+    }
+
+    /** View 가 제거될 때 함께 제거 */
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+        iTunesViewModel.trackResponse.removeObservers(viewLifecycleOwner)
+        favoriteViewModel.trackAllData.removeObservers(viewLifecycleOwner)
     }
 
     /** DB에 저장되어 있는 항목 */

@@ -11,6 +11,8 @@ abstract class BaseFragment : Fragment() {
     protected abstract fun initViewBinding(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?)
     protected abstract fun getViewRoot() : View
     protected abstract fun init()
+    protected abstract fun addListener()
+    protected abstract fun addObserver()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -20,5 +22,11 @@ abstract class BaseFragment : Fragment() {
         initViewBinding(inflater, container, savedInstanceState)
         init()
         return getViewRoot()
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        addListener()
+        addObserver()
     }
 }
