@@ -6,6 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.devhyeon.watchatask.databinding.FragmentTracklistBinding
 import com.devhyeon.watchatask.db.FavoriteViewModel
 import com.devhyeon.watchatask.network.ITunesViewModel
@@ -38,6 +40,10 @@ class SearchFragment : Fragment() {
 
     private val TREM  = "greenday"  //검색명(문제 조건에 따라 greenday 고정)
     private val ENTRY = "song"      //종류(문제 조건에 따라 song 고정)
+    private val LIMIT: Long = 10    //한번 조회할 때 가져올 개수
+    private var OFFSET: Long = 0   //시작위치
+
+    private val SCROLL_TOP_DOWN = 1 //스크롤 방향
 
     /** View 생성 */
     override fun onCreateView(
@@ -49,6 +55,8 @@ class SearchFragment : Fragment() {
 
         binding.rvTrackList.adapter = mAdapter
         mAdapter?.mPostList!!.clear()
+
+        OFFSET = 0
 
         return binding.root
     }
@@ -63,7 +71,8 @@ class SearchFragment : Fragment() {
     /** Resume 상태에 진입하면, 데이터 수신 */
     override fun onResume() {
         super.onResume()
-        iTunesViewModel.loadSearchData(viewLifecycleOwner,TREM, ENTRY)
+        iTunesViewModel.loadSearchDataPagination(viewLifecycleOwner,TREM, ENTRY,LIMIT,OFFSET)
+        OFFSET+=(LIMIT+1)
     }
 
     /** View 가 제거될 때 함께 제거 */
@@ -83,6 +92,23 @@ class SearchFragment : Fragment() {
                     favoriteViewModel.addItem(track)
                 } else {
                     favoriteViewModel.removeItem(track)
+                }
+            }
+        })
+        //스크롤 리스너
+        binding.rvTrackList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+
+                //마지막으로 보여준 아이템 위치
+                val lastVisibleItemPosition = (recyclerView.layoutManager as LinearLayoutManager?)!!.findLastCompletelyVisibleItemPosition()
+                //아이템 총 개수
+                val itemTotalCount = recyclerView.adapter!!.itemCount-1
+
+                // 스크롤이 끝에 도달한 경우
+                if (!binding.rvTrackList.canScrollVertically(SCROLL_TOP_DOWN) && lastVisibleItemPosition == itemTotalCount) {
+                    iTunesViewModel.loadSearchDataPagination(viewLifecycleOwner,TREM, ENTRY,LIMIT,OFFSET)
+                    OFFSET+=(LIMIT+1)
                 }
             }
         })
