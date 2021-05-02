@@ -5,7 +5,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.devhyeon.watchatask.R
 import com.devhyeon.watchatask.databinding.ItemTrackBinding
 import com.devhyeon.watchatask.db.FavoriteViewModel
@@ -14,7 +16,7 @@ import org.koin.android.viewmodel.compat.ScopeCompat.viewModel
 import org.koin.android.viewmodel.ext.android.viewModel
 import kotlin.properties.Delegates
 
-class FavoriteListAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class FavoriteListAdapter(val fragment : Fragment) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var mPostList: List<ITunesTrack> by Delegates.observable(emptyList()) { _, _, _ ->
         notifyDataSetChanged()
     }
@@ -38,9 +40,16 @@ class FavoriteListAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         RecyclerView.ViewHolder(viewDataBinding.root) {
         fun onBind(track: ITunesTrack) {
             (viewDataBinding as ItemTrackBinding).track = track
+            //이미지
+            Glide
+                .with(fragment)
+                .load(track.artworkUrl100)
+                .into(viewDataBinding.ivTrackArt)
+            //즐겨찾기 버튼 상태
             viewDataBinding.toggleStar.setOnCheckedChangeListener { buttonView, isChecked ->
                 track.favorit = isChecked
             }
+            //즐겨찾기 버튼 클릭
             viewDataBinding.toggleStar.setOnClickListener {
                 mListener!!.onItemClick(it, track)
             }

@@ -24,7 +24,7 @@ class FavoriteFragment : Fragment() {
     private val favoriteViewModel: FavoriteViewModel by viewModel()
 
     //어댑터
-    private var mAdapter: FavoriteListAdapter? = FavoriteListAdapter()
+    private var mAdapter: FavoriteListAdapter? = FavoriteListAdapter(this)
 
     override fun onCreateView(
         inflater: LayoutInflater,

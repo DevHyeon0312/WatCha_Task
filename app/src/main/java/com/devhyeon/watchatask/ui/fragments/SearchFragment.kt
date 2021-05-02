@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.ToggleButton
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import com.bumptech.glide.Glide
 import com.devhyeon.watchatask.databinding.FragmentTracklistBinding
 import com.devhyeon.watchatask.db.FavoriteViewModel
 import com.devhyeon.watchatask.network.ITunesViewModel
@@ -15,11 +16,6 @@ import com.devhyeon.watchatask.ui.adapters.TrackListAdapter
 import com.devhyeon.watchatask.utils.Status
 import com.devhyeon.watchatask.utils.toGone
 import com.devhyeon.watchatask.utils.toVisible
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.launch
-import org.koin.android.scope.lifecycleScope
-import org.koin.android.viewmodel.ext.android.getViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
 
 class SearchFragment : Fragment() {
@@ -32,7 +28,7 @@ class SearchFragment : Fragment() {
     private val iTunesViewModel: ITunesViewModel by viewModel()
 
     //어댑터
-    private var mAdapter: TrackListAdapter? = TrackListAdapter()
+    private var mAdapter: TrackListAdapter? = TrackListAdapter(this)
 
     private val TREM  = "greenday"  //검색명(문제 조건에 따라 greenday 고정)
     private val ENTRY = "song"      //종류(문제 조건에 따라 song 고정)
@@ -90,24 +86,6 @@ class SearchFragment : Fragment() {
         favoriteObserve()
     }
 
-    /** API 결과 옵저버 */
-    var apiData : List<ITunesTrack>? = null
-    private fun iTunesObserve() {
-        //API 요청,응답 에 따라 Run - Success - Fail
-        iTunesViewModel.trackResponse.observe(viewLifecycleOwner, Observer {
-            when (it) {
-                is Status.Run -> {}
-                is Status.Success -> {
-                    apiData = it.data!!.results
-                    addApiItem(apiData)
-                    viewVisibleSuccess()
-                }
-                is Status.Failure -> {
-                    viewVisibleFailure()
-                }
-            }
-        })
-    }
 
     var favoriteMap = HashMap<Long, ITunesTrack>()
     /** DB에 저장되어 있는 항목 */
@@ -137,6 +115,25 @@ class SearchFragment : Fragment() {
                     addApiItem(apiData)
 
                     iTunesViewModel.loadSearchData(TREM, ENTRY)
+                }
+                is Status.Failure -> {
+                    viewVisibleFailure()
+                }
+            }
+        })
+    }
+
+    /** API 결과 옵저버 */
+    var apiData : List<ITunesTrack>? = null
+    private fun iTunesObserve() {
+        //API 요청,응답 에 따라 Run - Success - Fail
+        iTunesViewModel.trackResponse.observe(viewLifecycleOwner, Observer {
+            when (it) {
+                is Status.Run -> {}
+                is Status.Success -> {
+                    apiData = it.data!!.results
+                    addApiItem(apiData)
+                    viewVisibleSuccess()
                 }
                 is Status.Failure -> {
                     viewVisibleFailure()

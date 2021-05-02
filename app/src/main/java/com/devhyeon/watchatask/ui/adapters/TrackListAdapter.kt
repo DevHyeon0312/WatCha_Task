@@ -5,14 +5,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.devhyeon.watchatask.R
 import com.devhyeon.watchatask.databinding.ItemTrackBinding
-import com.devhyeon.watchatask.db.FavoriteViewModel
 import com.devhyeon.watchatask.network.itunes.data.ITunesTrack
-import kotlin.properties.Delegates
 
-class TrackListAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class TrackListAdapter constructor(val fragment : Fragment) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var mPostList: MutableList<ITunesTrack> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -43,9 +43,16 @@ class TrackListAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         RecyclerView.ViewHolder(viewDataBinding.root) {
         fun onBind(track: ITunesTrack) {
             (viewDataBinding as ItemTrackBinding).track = track
+            //이미지
+            Glide
+                .with(fragment)
+                .load(track.artworkUrl100)
+                .into(viewDataBinding.ivTrackArt)
+            //즐겨찾기 버튼 상태
             viewDataBinding.toggleStar.setOnCheckedChangeListener { buttonView, isChecked ->
                 track.favorit = isChecked
             }
+            //즐겨찾기 버튼 클릭
             viewDataBinding.toggleStar.setOnClickListener {
                 mListener!!.onItemClick(it, track)
             }
