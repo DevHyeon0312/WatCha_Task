@@ -72,6 +72,7 @@ class SearchFragment : BaseFragment() , OnToggleClickListener {
     private fun clearData() {
         mAdapter?.mPostList!!.clear()
         OFFSET = 0
+        isScrolled = false
     }
 
     /** 등록해야 하는 리스너 */
