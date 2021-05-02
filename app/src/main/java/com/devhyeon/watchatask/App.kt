@@ -10,6 +10,7 @@ import org.koin.core.context.startKoin
 class App : Application() {
     override fun onCreate() {
         super.onCreate()
+        //androidContext 생명주기 : App 시작부터 종료까지
         startKoin {
             androidContext(this@App)
             modules(
