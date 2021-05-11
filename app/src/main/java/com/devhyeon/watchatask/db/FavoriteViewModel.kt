@@ -25,12 +25,11 @@ class FavoriteViewModel constructor(private val favoriteDatabase: FavoriteDataba
     /** DataBase 에 저장된 모든 데이터를 가져오는 메소드 */
     fun getAll() {
         CoroutineScope(Dispatchers.IO).launch {
-            var tracks : List<ITunesTrack>? = null
             runCatching {
                 _trackAllData.postValue(Status.Run())
-                tracks = favoriteDatabase.favoriteDto().getAll()
+                favoriteDatabase.favoriteDto().getAll()
             }.onSuccess {
-                _trackAllData.postValue(Status.Success(tracks!!))
+                _trackAllData.postValue(Status.Success(it))
             }.onFailure {
                 _trackAllData.postValue(Status.Failure(DB_ERROR, it.message!!))
             }

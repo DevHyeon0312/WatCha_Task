@@ -16,12 +16,11 @@ class ITunesViewModel constructor(private val iTunesAPI: ITunesAPI) : ViewModel(
     /** API 를 사용하여 검색 요청에 따른 응답을 처리하는 메소드 */
     fun loadSearchData(owner: LifecycleOwner, term: String, entity: String) {
         owner.lifecycleScope.launch {
-            var result : ITunesResponse? = null
             runCatching {
                 _trackResponse.value = Status.Run(null)
-                result = iTunesAPI.loadSearchData(term, entity)
+                iTunesAPI.loadSearchData(term, entity)
             }.onSuccess {
-                _trackResponse.value = Status.Success(result!!)
+                _trackResponse.value = Status.Success(it)
             }.onFailure {
                 _trackResponse.value = Status.Failure(API_ERROR, it.message!!)
                 DebugLog.e(TAG,it.message!!)
@@ -33,12 +32,11 @@ class ITunesViewModel constructor(private val iTunesAPI: ITunesAPI) : ViewModel(
     /** API 를 사용하여 검색 요청에 따른 응답을 페이징으로 처리하기 위한 메소드 */
     fun loadSearchDataPagination(owner: LifecycleOwner, term: String, entity: String, limit: Long, offset: Long) {
         owner.lifecycleScope.launch {
-            var result : ITunesResponse? = null
             runCatching {
                 _trackResponse.value = Status.Run(null)
-                result = iTunesAPI.loadSearchDataPagination(term, entity, limit, offset)
+                iTunesAPI.loadSearchDataPagination(term, entity, limit, offset)
             }.onSuccess {
-                _trackResponse.value = Status.Success(result!!)
+                _trackResponse.value = Status.Success(it)
             }.onFailure {
                 _trackResponse.value = Status.Failure(API_ERROR, it.message!!)
             }
