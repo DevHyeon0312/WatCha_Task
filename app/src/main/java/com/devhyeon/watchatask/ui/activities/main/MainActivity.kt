@@ -5,12 +5,8 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.devhyeon.watchatask.R
-import com.devhyeon.watchatask.constant.FRAGMENT_FAVORITE
-import com.devhyeon.watchatask.constant.FRAGMENT_SEARCH
 import com.devhyeon.watchatask.databinding.ActivityMainBinding
 import com.devhyeon.watchatask.ui.activities.base.BaseBindingActivity
-import com.devhyeon.watchatask.ui.fragments.FavoriteFragment
-import com.devhyeon.watchatask.ui.fragments.SearchFragment
 import com.devhyeon.watchatask.viewModel.BottomNavigationViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
 
@@ -25,10 +21,6 @@ class MainActivity : BaseBindingActivity() {
 
     //BottomNavigation Click 에 따라 처리하는 ViewModel
     private val bottomNavigationViewModel: BottomNavigationViewModel by viewModel()
-
-    //화면에 보여줄 Fragment
-    private val searchFragment by lazy { SearchFragment() }
-    private val favoriteFragment by lazy { FavoriteFragment() }
 
     //Binding
     override fun initViewBinding() {
@@ -70,20 +62,8 @@ class MainActivity : BaseBindingActivity() {
     private fun navigationObserve() {
         with(bottomNavigationViewModel) {
             navigationData.observe(this@MainActivity, Observer {
-                it?.let { fragmentId -> selectFragment(fragmentId) }
+                it?.let { fragment -> changeFragment(fragment) }
             })
-        }
-    }
-
-    /** 프래그먼트 결정 */
-    private fun selectFragment(fragmentId: Int) {
-        when(fragmentId) {
-            FRAGMENT_SEARCH -> {
-                changeFragment(searchFragment)
-            }
-            FRAGMENT_FAVORITE -> {
-                changeFragment(favoriteFragment)
-            }
         }
     }
 
