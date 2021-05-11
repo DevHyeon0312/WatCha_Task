@@ -13,8 +13,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.ITunesSearch">
-        <activity android:name=".ui.activities.main.MainActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize">
+        <activity android:name=".ui.activities.main.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

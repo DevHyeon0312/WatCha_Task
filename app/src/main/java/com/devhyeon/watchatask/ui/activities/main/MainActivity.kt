@@ -9,7 +9,7 @@ import com.devhyeon.watchatask.R
 import com.devhyeon.watchatask.constant.FRAGMENT_FAVORITE
 import com.devhyeon.watchatask.constant.FRAGMENT_SEARCH
 import com.devhyeon.watchatask.databinding.ActivityMainBinding
-import com.devhyeon.watchatask.ui.activities.base.BaseActivity
+import com.devhyeon.watchatask.ui.activities.base.BaseBindingActivity
 import com.devhyeon.watchatask.ui.fragments.FavoriteFragment
 import com.devhyeon.watchatask.ui.fragments.SearchFragment
 import com.devhyeon.watchatask.utils.DebugLog
@@ -22,7 +22,7 @@ import org.koin.android.viewmodel.ext.android.viewModel
  * 2. SearchFragment 가 첫 시작
  * 3. BottomNavigationClick 으로 Fragment 교체
  * */
-class MainActivity : BaseActivity() {
+class MainActivity : BaseBindingActivity() {
     private lateinit var binding: ActivityMainBinding
 
     //BottomNavigation Click 에 따라 처리하는 ViewModel
@@ -44,26 +44,24 @@ class MainActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        addObserver()
-
-        init()
-    }
-
-    /** 화면이 회전할 때 동작하는 메소드 */
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        DebugLog.d(TAG,"onConfigurationChanged()")
+        addObserver()   //옵저버 추가
+        addListener()   //리스너 추가
+        init()          //데이터 초기화
     }
 
     /** MainActivity 동작에 필요한 부분 초기화  */
     private fun init() {
-        binding.bottomNavigationView.run {
-            setOnNavigationItemSelectedListener {
-                mainViewModel.clickNavigation(it.itemId)
-                true
-            }
-            selectedItemId = R.id.menu_search
+        //viewModel 에서 유지되고 있는 데이터가 없는 경우 : ex. 최초 생성
+        if(mainViewModel.navigationData.value == null) {
+            mainViewModel.clickNavigation(R.id.menu_search)
+        }
+    }
+
+    /** 리스너 추가 */
+    private fun addListener() {
+        binding.bottomNavigationView.setOnNavigationItemSelectedListener {
+            mainViewModel.clickNavigation(it.itemId)
+            true
         }
     }
 
@@ -76,26 +74,20 @@ class MainActivity : BaseActivity() {
     private fun navigationObserve() {
         with(mainViewModel) {
             navigationData.observe(this@MainActivity, Observer {
-                when(it) {
-                    is Status.Run -> {
-                        DebugLog.d(TAG, it.data.toString())
-                    }
-                    is Status.Success -> {
-                        DebugLog.d(TAG, it.data.toString())
-                        when(it.data) {
-                            FRAGMENT_SEARCH -> {
-                                changeFragment(searchFragment)
-                            }
-                            FRAGMENT_FAVORITE -> {
-                                changeFragment(favoriteFragment)
-                            }
-                        }
-                    }
-                    is Status.Failure -> {
-                        DebugLog.e(TAG, it.errorMessage!!)
-                    }
-                }
+                it?.let { fragmentId -> selectFragment(fragmentId) }
             })
+        }
+    }
+
+    /** 프래그먼트 결정 */
+    private fun selectFragment(fragmentId: Int) {
+        when(fragmentId) {
+            FRAGMENT_SEARCH -> {
+                changeFragment(searchFragment)
+            }
+            FRAGMENT_FAVORITE -> {
+                changeFragment(favoriteFragment)
+            }
         }
     }
 
