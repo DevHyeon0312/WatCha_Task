@@ -49,10 +49,8 @@ class MainActivity : BaseBindingActivity() {
 
     /** MainActivity 동작에 필요한 부분 초기화  */
     private fun init() {
-        //viewModel 에서 유지되고 있는 데이터가 없는 경우 : ex. 최초 생성
-        if(bottomNavigationViewModel.navigationData.value == null) {
-            bottomNavigationViewModel.clickNavigation(R.id.menu_search)
-        }
+        //viewModel 에 현재 보여주어야 하는 데이터에 대한 요청 [만약, observer 가 동작하는 상황에는, 내부적으로 동작하지 않음]
+        bottomNavigationViewModel.initNavigation()
     }
 
     /** 리스너 추가 */
