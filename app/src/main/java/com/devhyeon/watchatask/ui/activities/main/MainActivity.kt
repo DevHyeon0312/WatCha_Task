@@ -70,7 +70,7 @@ class MainActivity : BaseBindingActivity() {
         navigationObserve()
     }
 
-    /** bottomNavigation Click 에 따른 상태 옵저버 */
+    /** navigationData 에 따른 상태 옵저버 */
     private fun navigationObserve() {
         with(mainViewModel) {
             navigationData.observe(this@MainActivity, Observer {
