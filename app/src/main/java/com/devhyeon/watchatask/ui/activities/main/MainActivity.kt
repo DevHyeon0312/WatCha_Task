@@ -1,6 +1,5 @@
 package com.devhyeon.watchatask.ui.activities.main
 
-import android.content.res.Configuration
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
@@ -12,8 +11,7 @@ import com.devhyeon.watchatask.databinding.ActivityMainBinding
 import com.devhyeon.watchatask.ui.activities.base.BaseBindingActivity
 import com.devhyeon.watchatask.ui.fragments.FavoriteFragment
 import com.devhyeon.watchatask.ui.fragments.SearchFragment
-import com.devhyeon.watchatask.utils.DebugLog
-import com.devhyeon.watchatask.utils.Status
+import com.devhyeon.watchatask.viewModel.BottomNavigationViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
 
 /**
@@ -26,7 +24,7 @@ class MainActivity : BaseBindingActivity() {
     private lateinit var binding: ActivityMainBinding
 
     //BottomNavigation Click 에 따라 처리하는 ViewModel
-    private val mainViewModel: MainViewModel by viewModel()
+    private val bottomNavigationViewModel: BottomNavigationViewModel by viewModel()
 
     //화면에 보여줄 Fragment
     private val searchFragment by lazy { SearchFragment() }
@@ -52,15 +50,15 @@ class MainActivity : BaseBindingActivity() {
     /** MainActivity 동작에 필요한 부분 초기화  */
     private fun init() {
         //viewModel 에서 유지되고 있는 데이터가 없는 경우 : ex. 최초 생성
-        if(mainViewModel.navigationData.value == null) {
-            mainViewModel.clickNavigation(R.id.menu_search)
+        if(bottomNavigationViewModel.navigationData.value == null) {
+            bottomNavigationViewModel.clickNavigation(R.id.menu_search)
         }
     }
 
     /** 리스너 추가 */
     private fun addListener() {
         binding.bottomNavigationView.setOnNavigationItemSelectedListener {
-            mainViewModel.clickNavigation(it.itemId)
+            bottomNavigationViewModel.clickNavigation(it.itemId)
             true
         }
     }
@@ -72,7 +70,7 @@ class MainActivity : BaseBindingActivity() {
 
     /** navigationData 에 따른 상태 옵저버 */
     private fun navigationObserve() {
-        with(mainViewModel) {
+        with(bottomNavigationViewModel) {
             navigationData.observe(this@MainActivity, Observer {
                 it?.let { fragmentId -> selectFragment(fragmentId) }
             })

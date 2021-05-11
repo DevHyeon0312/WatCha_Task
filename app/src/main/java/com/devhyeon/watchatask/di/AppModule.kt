@@ -4,7 +4,7 @@ import android.content.Context
 import com.devhyeon.watchatask.db.favorite.FavoriteDatabase
 import com.devhyeon.watchatask.db.FavoriteViewModel
 import com.devhyeon.watchatask.network.ITunesViewModel
-import com.devhyeon.watchatask.ui.activities.main.MainViewModel
+import com.devhyeon.watchatask.viewModel.BottomNavigationViewModel
 import org.koin.android.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -13,7 +13,7 @@ val AppModule = module {
         ITunesViewModel(get())
     }
     viewModel {
-        MainViewModel()
+        BottomNavigationViewModel()
     }
 
     single { createDataBase(get()) }

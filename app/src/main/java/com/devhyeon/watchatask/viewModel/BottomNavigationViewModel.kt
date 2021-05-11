@@ -1,4 +1,4 @@
-package com.devhyeon.watchatask.ui.activities.main
+package com.devhyeon.watchatask.viewModel
 
 import androidx.annotation.IdRes
 import androidx.lifecycle.LiveData
@@ -10,7 +10,7 @@ import com.devhyeon.watchatask.constant.FRAGMENT_FAVORITE
 import com.devhyeon.watchatask.constant.FRAGMENT_SEARCH
 import kotlinx.coroutines.launch
 
-class MainViewModel : ViewModel(){
+class BottomNavigationViewModel : ViewModel(){
     private val _navigationData = MutableLiveData<Int>().apply { FRAGMENT_SEARCH }
     val navigationData: LiveData<Int> get() = _navigationData
 
