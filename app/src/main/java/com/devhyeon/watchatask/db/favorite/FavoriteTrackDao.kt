@@ -24,8 +24,8 @@ interface FavoriteTrackDao {
     @Query("SELECT * FROM favorite WHERE trackId IS :id")
     fun loadById(id: Long) : ITunesTrack
 
-    @Insert(onConflict = REPLACE)
-    fun insertAll(vararg tracks: ITunesTrack)
+    @Insert
+    fun insert(vararg tracks: ITunesTrack)
 
     @Delete
     fun delete(track: ITunesTrack)

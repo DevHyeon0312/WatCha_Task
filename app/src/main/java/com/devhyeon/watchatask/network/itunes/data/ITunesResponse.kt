@@ -9,5 +9,5 @@ import com.google.gson.annotations.SerializedName
 
 data class ITunesResponse(
     @SerializedName("resultCount")  val resultCount : Long,
-    @SerializedName("results")      val results     : List<ITunesTrack>
+    @SerializedName("results") var results     : List<ITunesTrack>
 )
