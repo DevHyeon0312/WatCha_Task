@@ -13,6 +13,6 @@ const val DB_ERROR = -3
 const val TIME_OUT = 3000L
 
 //View 상태
-const val VIEW_STATUS_RUN = 0
-const val VIEW_STATUS_SUCCESS = 1
-const val VIEW_STATUS_FAIL = 2
+//const val VIEW_STATUS_RUN = 0
+//const val VIEW_STATUS_SUCCESS = 1
+//const val VIEW_STATUS_FAIL = 2
