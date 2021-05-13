@@ -4,18 +4,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.devhyeon.watchatask.databinding.FragmentFavoritelistBinding
-import com.devhyeon.watchatask.db.FavoriteViewModel
 import com.devhyeon.watchatask.network.itunes.data.ITunesTrack
-import com.devhyeon.watchatask.ui.adapters.FavoriteListAdapter
 import com.devhyeon.watchatask.ui.adapters.OnToggleClickListener
-import com.devhyeon.watchatask.ui.fragments.base.BaseFragment
-import com.devhyeon.watchatask.utils.DebugLog
-import com.devhyeon.watchatask.utils.Status
-import com.devhyeon.watchatask.utils.toGone
-import com.devhyeon.watchatask.utils.toVisible
+import com.devhyeon.watchatask.ui.adapters.TrackListAdapter
+import com.devhyeon.watchatask.ui.fragments.base.BaseBindingFragment
+import com.devhyeon.watchatask.viewModel.TrackListViewModel
 import org.koin.android.viewmodel.ext.android.viewModel
 
 /**
@@ -24,7 +19,7 @@ import org.koin.android.viewmodel.ext.android.viewModel
  * 2. 결과 출력
  * 3. 즐겨찾기 클릭에 따른 동작이벤트
  * */
-class FavoriteFragment : BaseFragment() , OnToggleClickListener {
+class FavoriteFragment : BaseBindingFragment() , OnToggleClickListener {
     companion object {
         private val TAG = FavoriteFragment::class.java.name
     }
@@ -34,10 +29,10 @@ class FavoriteFragment : BaseFragment() , OnToggleClickListener {
     private val binding get() = _binding!!
 
     //뷰모델
-    private val favoriteViewModel: FavoriteViewModel by viewModel()
+    private val trackListViewModel: TrackListViewModel by viewModel()
 
     //어댑터
-    private var mAdapter: FavoriteListAdapter? = FavoriteListAdapter(this)
+    private var adapter: TrackListAdapter? = TrackListAdapter(this)
 
     override fun initViewBinding(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) {
         _binding = FragmentFavoritelistBinding.inflate(inflater, container, false)
@@ -48,109 +43,53 @@ class FavoriteFragment : BaseFragment() , OnToggleClickListener {
     }
 
     override fun init() {
-        binding.rvTrackList.adapter = mAdapter
+        binding.rvTrackList.adapter = adapter
     }
 
-    /** 등록해야 하는 리스너 */
-    override fun addListener() {
-        //토글버튼 클릭 리스너
-        mAdapter!!.setOnToggleClickListener(this)
-
-        //새로고침 클릭 이벤트
-        binding.btnRefresh.setOnClickListener {
-            viewVisibleRun()
-            favoriteViewModel.getAll()
-        }
-    }
-
-    /** 등록해야 하는 옵저버 */
-    override fun addObserver() {
-        favoriteObserve()
+    /** View 생성이 완료되면, */
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        addListener()
+        addObserver()
     }
 
     /** Resume 상태에 진입하면, 데이터 수신 */
     override fun onResume() {
         super.onResume()
-        viewVisibleRun()
-        favoriteViewModel.getAll()
+        trackListViewModel.loadFavoriteData()
     }
 
     /** View 가 제거될 때 함께 제거 */
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-        favoriteViewModel.trackAllData.removeObservers(viewLifecycleOwner)
     }
 
+    /** 등록해야 하는 리스너 */
+    private fun addListener() {
+        //토글버튼 클릭 리스너
+        adapter!!.setOnToggleClickListener(this)
+    }
 
-    /** DB 결과 옵저버 */
-    private fun favoriteObserve() {
-        //DB getAll 쿼리문 사용에 따른 Run - Success - Fail
-        favoriteViewModel.trackAllData.observe(viewLifecycleOwner, Observer {
-            when(it) {
-                is Status.Run -> {
-                    viewVisibleRun()
-                }
-                is Status.Success -> {
-                    addFavoriteItem(it.data!!)
-                    viewVisibleSuccess(it.data)
-                }
-                is Status.Failure -> {
-                    DebugLog.e(TAG,"favoriteObserve()", it.errorMessage!!)
-                    viewVisibleFailure()
-                }
-            }
+    /** 등록해야 하는 옵저버 */
+    private fun addObserver() {
+        //recyclerView update
+        trackListViewModel.trackFavoriteData.observe(viewLifecycleOwner, Observer {
+            adapter?.setList(it)
         })
-    }
 
-    /** 즐겨찾기 항목 추가 */
-    private fun addFavoriteItem(list : List<ITunesTrack>) {
-        mAdapter?.mPostList = list
-    }
-
-    /** RUN 상태 일때 보여주는 View */
-    private fun viewVisibleRun() {
-        binding.loaderView.toVisible()
-        binding.contentsView.toGone()
-        binding.errorView.toGone()
-    }
-
-    /** SUCCESS DATA 에 따라 보여주는 View */
-    private fun viewVisibleSuccess(list : List<ITunesTrack>) {
-        if(list.isEmpty()) {
-            viewVisibleEmpty()
-        } else {
-            viewVisibleNotEmpty()
-        }
-    }
-    /** SUCCESS 상태[즐겨찾기 있음] 일때 보여주는 View */
-    private fun viewVisibleNotEmpty() {
-        binding.loaderView.toGone()
-        binding.contentsView.toVisible()
-        binding.favoriteView.toGone()
-        binding.errorView.toGone()
-    }
-    /** SUCCESS 상태[즐겨찾기 없음] 일때 보여주는 View */
-    private fun viewVisibleEmpty() {
-        binding.loaderView.toGone()
-        binding.contentsView.toGone()
-        binding.favoriteView.toVisible()
-        binding.errorView.toGone()
-    }
-
-    /** FAIL 상태 일때 보여주는 View */
-    private fun viewVisibleFailure() {
-        binding.loaderView.toGone()
-        binding.contentsView.toGone()
-        binding.errorView.toVisible()
+        //dataBinding 으로 view status 에 따른 visible 처리
+        trackListViewModel.viewFavoriteStatusData.observe(viewLifecycleOwner, Observer {
+            binding.viewModel = trackListViewModel
+        })
     }
 
     /** 토클 클릭 리스너 */
     override fun onToggleClick(v: View?, track: ITunesTrack) {
         if (track.favorit) {
-            favoriteViewModel.addItem(track)
+            trackListViewModel.addFavoriteData(track)
         } else {
-            favoriteViewModel.removeItem(track)
+            trackListViewModel.removeFavoriteData(track)
         }
     }
 }
