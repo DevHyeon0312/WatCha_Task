@@ -19,3 +19,6 @@
 * 1. View 는 ViewModel 을 통하여 온전히 View를 그리는 역할만 하도록 해보기
 * 2. View 를 그려줄때 DataBinding 을 사용하여 처리해보기
 * 3. 중복코드를 없앨 수 있는 부분에 대해 수정해보기
+
+
+![화면 기록 2021-05-17 오후 2 19 15](https://user-images.githubusercontent.com/72678200/118436132-310f0500-b71b-11eb-9d16-3ee67f35fced.gif)
